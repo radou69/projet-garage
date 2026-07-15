@@ -9,7 +9,6 @@ Modèle de données de l'application AutoGest (gestion de garage).
 ## Diagramme
 
 ```mermaid
-%%{init: {'theme':'neutral', 'themeVariables': { 'primaryColor': '#e8eef7', 'primaryBorderColor': '#333333', 'primaryTextColor': '#111111', 'lineColor': '#333333', 'tertiaryColor': '#ffffff' }}}%%
 erDiagram
     UTILISATEUR ||--o{ CLIENT : "saisit"
     CLIENT ||--|| VEHICULE : "possède"
@@ -65,6 +64,18 @@ erDiagram
         int id_vehicule FK
     }
 
+    PIECE {
+        int id_piece PK
+        string nom
+        decimal prix_unitaire
+    }
+
+    REPARATION_PIECE {
+        int id_reparation PK_FK
+        int id_piece PK_FK
+        int quantite
+    }
+
     DEVIS {
         int id_devis PK
         date date
@@ -82,12 +93,6 @@ erDiagram
         int id_devis FK
     }
 
-    PIECE {
-        int id_piece PK
-        string nom
-        decimal prix_unitaire
-    }
-
     VEHICULE_OCCASION {
         int id_occasion PK
         string marque
@@ -97,12 +102,6 @@ erDiagram
         decimal prix
         string statut
         int id_client FK
-    }
-
-    REPARATION_PIECE {
-        int id_reparation PK_FK
-        int id_piece PK_FK
-        int quantite
     }
 ```
 
@@ -121,8 +120,10 @@ erDiagram
 
 ## Notes de conception
 
-- **VEHICULE** (voitures des clients, qu'on répare) et **VEHICULE_OCCASION** (stock à vendre) sont deux entités distinctes : attributs et cycle de vie différents.
-- L'association **utilise** (REPARATION ↔ PIECE) est de type plusieurs-à-plusieurs et porte un attribut (quantité). En MLD elle devient la table de liaison **REPARATION_PIECE**.
+- **VEHICULE** (voitures des clients, qu'on répare) et **VEHICULE_OCCASION** (stock à vendre)
+  sont deux entités distinctes : attributs et cycle de vie différents.
+- L'association **utilise** (REPARATION ↔ PIECE) est de type plusieurs-à-plusieurs et porte
+  un attribut (quantité). En MLD elle devient la table de liaison **REPARATION_PIECE**.
 - Choix retenu : **1 client = 1 véhicule** (relation simplifiée).
 - Choix retenu : **1 devis → 1 facture** (lien direct).
 - Le champ `role` de UTILISATEUR distingue le patron de l'employé (gestion des droits).

@@ -1,0 +1,47 @@
+security:
+    # bcrypt explicitement (demandé par le formateur), plutôt que "auto"
+    password_hashers:
+        App\Entity\User: 'bcrypt'
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+
+        # Firewall dédié à la connexion : reçoit email + mot de passe en JSON,
+        # renvoie un token JWT si c'est correct (géré automatiquement par le bundle Lexik).
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        # Firewall pour toutes les autres routes API : exige un token JWT valide.
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~
+
+        main:
+            lazy: true
+            provider: app_user_provider
+
+    access_control:
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+when@test:
+    security:
+        password_hashers:
+            App\Entity\User:
+                algorithm: bcrypt
+                cost: 4

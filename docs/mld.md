@@ -4,7 +4,6 @@ Modèle Logique de Données de l'application AutoGest (gestion de garage).
 Syntaxe : Markdown + Mermaid (`erDiagram`).
 
 ```mermaid
-%%{init: {'theme':'neutral', 'themeVariables': { 'primaryColor': '#e8eef7', 'primaryBorderColor': '#333333', 'primaryTextColor': '#111111', 'lineColor': '#333333', 'tertiaryColor': '#ffffff' }}}%%
 erDiagram
     UTILISATEUR ||--o{ CLIENT : create
     CLIENT ||--|| VEHICULE : create
