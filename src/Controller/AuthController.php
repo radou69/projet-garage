@@ -90,11 +90,5 @@ class AuthController extends AbstractController
         return $this->json(['message' => sprintf('Bienvenue %s (rôle : %s)', $user->getUserIdentifier(), $user->getRoles()[0] ?? '?')]);
     }
 
-    // Exemple de route réservée au patron (équivalent des factures qu'on avait en Node)
-    #[Route('/api/factures', name: 'api_factures_test', methods: ['GET'])]
-    public function facturesTest(): JsonResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_PATRON');
-        return $this->json(['message' => 'Liste des factures (accès patron confirmé).']);
-    }
+   
 }

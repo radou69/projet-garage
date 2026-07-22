@@ -30,6 +30,8 @@ class Facture
 
     #[ORM\Column(length: 20)]
     private ?string $statut = null;
+    #[ORM\Column(options: ['default' => true])]
+    private ?bool $actif = true;
 
     #[ORM\OneToOne(inversedBy: 'facture', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -114,7 +116,17 @@ class Facture
 
         return $this;
     }
+public function isActif(): ?bool
+    {
+        return $this->actif;
+    }
 
+    public function setActif(bool $actif): static
+    {
+        $this->actif = $actif;
+
+        return $this;
+    }
     public function getDevis(): ?Devis
     {
         return $this->devis;

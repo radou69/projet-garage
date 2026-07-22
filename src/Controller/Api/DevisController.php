@@ -3,6 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Entity\Devis;
+use App\Entity\Facture;
+use App\Entity\FactureItem;
 use App\Repository\ClientRepository;
 use App\Repository\DevisRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -154,5 +156,68 @@ class DevisController extends AbstractController
         $em->flush();
 
         return $this->json(['message' => 'Devis archivé avec succès.']);
+    }
+
+    // Convertit une Facture en tableau simple pour le JSON (même format que FactureController).
+    private function factureToArray(Facture $facture): array
+    {
+        return [
+            'id' => $facture->getId(),
+            'date' => $facture->getDate()?->format('Y-m-d'),
+            'montantTtc' => $facture->getMontantTtc(),
+            'montantAcompte' => $facture->getMontantAcompte(),
+            'dateAcompte' => $facture->getDateAcompte()?->format('Y-m-d'),
+            'statut' => $facture->getStatut(),
+            'actif' => $facture->isActif(),
+            'client' => [
+                'id' => $facture->getClient()?->getId(),
+                'nom' => $facture->getClient()?->getNom(),
+                'prenom' => $facture->getClient()?->getPrenom(),
+            ],
+            'devisId' => $facture->getDevis()?->getId(),
+        ];
+    }
+
+    // Transformer un devis accepté en facture (patron uniquement — création d'un document légal/financier).
+    // Copie les DevisItem en FactureItem et reprend le montantTtc du devis. Un devis ne peut être
+    // transformé qu'une seule fois (relation OneToOne Devis-Facture).
+    #[Route('/api/devis/{id}/transformer-en-facture', name: 'api_devis_transformer_en_facture', methods: ['POST'])]
+    public function transformerEnFacture(Devis $devis, EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_PATRON');
+
+        if ($devis->getFacture() !== null) {
+            return $this->json(['message' => 'Ce devis a déjà été transformé en facture.'], 409);
+        }
+
+        if ($devis->getStatut() !== 'accepte') {
+            return $this->json(['message' => 'Seul un devis accepté peut être transformé en facture.'], 400);
+        }
+
+        if ($devis->getDevisItems()->isEmpty()) {
+            return $this->json(['message' => 'Le devis ne contient aucune ligne.'], 400);
+        }
+
+        $facture = new Facture();
+        $facture->setDate(new \DateTime());
+        $facture->setMontantTtc($devis->getMontantTtc());
+        $facture->setStatut('emise');
+        $facture->setClient($devis->getClient());
+        $facture->setDevis($devis);
+
+        foreach ($devis->getDevisItems() as $devisItem) {
+            $factureItem = new FactureItem();
+            $factureItem->setDesignation($devisItem->getDesignation());
+            $factureItem->setQuantite($devisItem->getQuantite());
+            $factureItem->setPrixUnitaire($devisItem->getPrixUnitaire());
+            $factureItem->setMontant($devisItem->getMontant());
+            $facture->addFactureItem($factureItem);
+            $em->persist($factureItem);
+        }
+
+        $em->persist($facture);
+        $em->flush();
+
+        return $this->json($this->factureToArray($facture), 201);
     }
 }
