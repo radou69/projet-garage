@@ -1,0 +1,88 @@
+<div class="devis-detail-container">
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="success-message">{{ successMessage }}</p>
+  }
+
+  @if (devis) {
+    <div class="devis-header">
+      <h1>Devis — {{ devis.client.prenom }} {{ devis.client.nom }}</h1>
+      <p class="devis-date">Date : {{ devis.date }}</p>
+
+      @if (devis.factureId) {
+        <p class="figee-notice">Ce devis a été transformé en facture (n° {{ devis.factureId }}) — il est figé, plus aucune modification possible.</p>
+      } @else {
+        <div class="form-group statut-group">
+          <label for="statut">Statut</label>
+          <select id="statut" [(ngModel)]="devis.statut" (ngModelChange)="changerStatut($event)">
+            @for (s of statutsPossibles; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="totaux">
+        <p>Montant HT : <strong>{{ devis.montantHt }} €</strong></p>
+        <p>Montant TTC (TVA 20%) : <strong>{{ devis.montantTtc }} €</strong></p>
+      </div>
+
+      @if (devis.statut === 'accepte' && !devis.factureId) {
+        <button (click)="transformerEnFacture()" class="transform-btn">Transformer en facture</button>
+      }
+    </div>
+
+    <h2>Lignes du devis</h2>
+
+    @if (items.length === 0) {
+      <p>Aucune ligne pour le moment.</p>
+    }
+
+    @if (items.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th>Montant</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ligne of items; track ligne.id) {
+              <tr>
+                <td>{{ ligne.designation }}</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.prixUnitaire }} €</td>
+                <td>{{ ligne.montant }} €</td>
+                <td>
+                  @if (!devis.factureId) {
+                    <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Supprimer</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (!devis.factureId) {
+      <form (ngSubmit)="ajouterLigne()" class="ligne-form">
+        <h3>Ajouter une ligne</h3>
+        <div class="ligne-inputs">
+          <input type="text" name="designation" [(ngModel)]="nouvelleLigne.designation" placeholder="Désignation" required>
+          <input type="number" name="quantite" [(ngModel)]="nouvelleLigne.quantite" placeholder="Qté" min="1" required>
+          <input type="number" name="prixUnitaire" [(ngModel)]="nouvelleLigne.prixUnitaire" placeholder="Prix unitaire" min="0.01" step="0.01" required>
+          <button type="submit">Ajouter</button>
+        </div>
+      </form>
+    }
+  }
+
+  <a routerLink="/devis" class="back-link">← Retour aux devis</a>
+</div>

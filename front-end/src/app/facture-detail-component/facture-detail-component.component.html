@@ -1,0 +1,66 @@
+<div class="facture-detail-container">
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="success-message">{{ successMessage }}</p>
+  }
+
+  @if (facture) {
+    <div class="facture-header">
+      <h1>Facture — {{ facture.client.prenom }} {{ facture.client.nom }}</h1>
+      <p class="facture-date">Date : {{ facture.date }} @if (facture.devisId) { (issue du devis n° {{ facture.devisId }}) }</p>
+
+      <div class="totaux">
+        <p>Montant TTC : <strong>{{ facture.montantTtc }} €</strong></p>
+        <p>Acompte versé : <strong>{{ facture.montantAcompte }} €</strong> @if (facture.dateAcompte) { (le {{ facture.dateAcompte }}) }</p>
+        <p>Statut : <strong>{{ facture.statut }}</strong></p>
+      </div>
+
+      @if (facture.statut !== 'payee' && facture.statut !== 'annulee') {
+        <div class="actions-facture">
+          <div class="acompte-form">
+            <label for="acompte">Enregistrer un acompte (€)</label>
+            <div class="acompte-inputs">
+              <input type="number" id="acompte" name="acompte" [(ngModel)]="montantAcompteSaisi" min="0.01" step="0.01">
+              <button (click)="enregistrerAcompte()">Enregistrer</button>
+            </div>
+          </div>
+          <button (click)="annulerFacture()" class="cancel-facture-btn">Annuler la facture</button>
+        </div>
+      } @else {
+        <p class="figee-notice">Cette facture est {{ facture.statut }} — plus aucune action possible.</p>
+      }
+    </div>
+
+    <h2>Lignes de la facture</h2>
+    <p class="lignes-info">Ces lignes ont été copiées depuis le devis d'origine au moment de la transformation : elles ne sont plus modifiables (document légal figé).</p>
+
+    @if (items.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th>Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ligne of items; track ligne.id) {
+              <tr>
+                <td>{{ ligne.designation }}</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.prixUnitaire }} €</td>
+                <td>{{ ligne.montant }} €</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  <a routerLink="/factures" class="back-link">← Retour aux factures</a>
+</div>

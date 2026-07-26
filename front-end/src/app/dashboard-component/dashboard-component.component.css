@@ -1,0 +1,147 @@
+:host {
+  --color-header-black: #000000;
+  --color-navy: #204680;
+  --color-white: #FFFFFF;
+  --color-charcoal: #2B2B2B;
+  --color-orange: #D57311;
+  --color-green: #088402;
+  --color-blue-accent: #3357A8;
+  --color-purple-accent: #8E3B94;
+  --color-cyan-accent: #1FA9C9;
+  --color-gold-accent: #C9A227;
+  --color-shadow-strong: rgba(0, 0, 0, 0.2);
+  --color-shadow-fade: rgba(0, 0, 0, 0);
+
+  display: block;
+}
+
+.dashboard-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0;
+  background-color: var(--color-navy);
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background-color: var(--color-header-black);
+}
+.dashboard-header h1 {
+  color: var(--color-white);
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+.welcome-banner {
+  padding: 1.5rem 1.5rem 2rem;
+  background-color: var(--color-navy);
+}
+.welcome-banner h2 {
+  color: var(--color-white);
+  margin: 0 0 0.25rem 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.welcome-banner p {
+  color: var(--color-white);
+  opacity: 0.85;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.dashboard-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.125rem;
+  padding: 0 1.5rem 2rem;
+}
+
+.nav-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: var(--color-white);
+  padding: 1.5rem 1.25rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px var(--color-shadow-strong);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.nav-card:hover {
+  box-shadow: 0 4px 16px var(--color-shadow-strong), 0 0 0 2px var(--color-shadow-fade);
+  transform: translateY(-1px);
+}
+.nav-card-full {
+  grid-column: 1 / -1;
+  max-width: 280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-clients { color: var(--color-blue-accent); }
+.icon-reparations { color: var(--color-purple-accent); }
+.icon-factures { color: var(--color-orange); }
+.icon-vehicules { color: var(--color-cyan-accent); }
+.icon-devis { color: var(--color-green); }
+.icon-occasion { color: var(--color-gold-accent); }
+
+.nav-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--color-navy);
+  color: var(--color-white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.nav-card h2 {
+  color: var(--color-charcoal);
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .dashboard-nav {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+}

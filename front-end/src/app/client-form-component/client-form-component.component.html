@@ -1,0 +1,41 @@
+<div class="form-container">
+  <form (ngSubmit)="onSubmit()" class="client-form">
+    <h1>{{ isEditMode ? 'Modifier le client' : 'Nouveau client' }}</h1>
+
+    <div class="form-group">
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" name="nom" [(ngModel)]="client.nom" required>
+    </div>
+
+    <div class="form-group">
+      <label for="prenom">Prénom</label>
+      <input type="text" id="prenom" name="prenom" [(ngModel)]="client.prenom" required>
+    </div>
+
+    <div class="form-group">
+      <label for="telephone">Téléphone</label>
+      <input type="tel" id="telephone" name="telephone" [(ngModel)]="client.telephone" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" [(ngModel)]="client.email">
+    </div>
+
+    <div class="form-group">
+      <label for="adresse">Adresse</label>
+      <input type="text" id="adresse" name="adresse" [(ngModel)]="client.adresse">
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
+
+    <button type="submit">{{ isEditMode ? 'Enregistrer' : 'Créer le client' }}</button>
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </form>
+</div>

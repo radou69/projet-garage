@@ -1,0 +1,43 @@
+<div class="utilisateur-list-container">
+  <div class="header-row">
+    <h1>Employés</h1>
+    @if (authService.isPatron()) {
+      <a routerLink="/employes/nouveau" class="new-btn">+ Créer un compte employé</a>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (utilisateurs.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of utilisateurs; track u.id) {
+            <tr>
+              <td>{{ u.nom }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ estPatron(u) ? 'Patron' : 'Employé' }}</td>
+              <td>
+                @if (!estPatron(u) && authService.isPatron()) {
+                  <button (click)="desactiverUtilisateur(u.id!)" class="archive-btn">Désactiver</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

@@ -1,0 +1,44 @@
+<div class="facture-list-container">
+  <div class="header-row">
+    <h1>Factures</h1>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (factures.length === 0 && !errorMessage) {
+    <p>Aucune facture pour le moment. Les factures naissent de la transformation d'un devis accepté.</p>
+  }
+
+  @if (factures.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Montant TTC</th>
+            <th>Acompte</th>
+            <th>Statut</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (facture of factures; track facture.id) {
+            <tr>
+              <td>{{ facture.date }}</td>
+              <td>{{ facture.client.prenom }} {{ facture.client.nom }}</td>
+              <td>{{ facture.montantTtc }} €</td>
+              <td>{{ facture.montantAcompte }} €</td>
+              <td>{{ facture.statut }}</td>
+              <td><a [routerLink]="['/factures', facture.id]" class="edit-link">Voir le détail</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

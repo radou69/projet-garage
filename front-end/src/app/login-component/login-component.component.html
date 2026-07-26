@@ -1,0 +1,35 @@
+<div class="login-container">
+  <form (ngSubmit)="onSubmit()" class="login-form">
+    <h1>AutoGest</h1>
+    <p>Connexion</p>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        required
+        placeholder="votre.email@exemple.com"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="password">Mot de passe</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        [(ngModel)]="password"
+        required
+      >
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <button type="submit">Se connecter</button>
+  </form>
+</div>
