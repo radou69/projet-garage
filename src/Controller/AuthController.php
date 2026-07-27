@@ -82,6 +82,40 @@ class AuthController extends AbstractController
         return $this->json(['message' => 'Compte employé créé avec succès.', 'id' => $user->getId()], 201);
     }
 
+        // Lister les comptes employés actifs (réservé au patron)
+    #[Route('/api/utilisateurs', name: 'api_utilisateurs_list', methods: ['GET'])]
+    public function listUtilisateurs(EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $utilisateurs = $em->getRepository(User::class)->findBy(['actif' => true]);
+        return $this->json(array_map(function (User $u) {
+            return [
+                'id' => $u->getId(),
+                'nom' => $u->getNom(),
+                'email' => $u->getEmail(),
+                'roles' => $u->getRoles(),
+                'actif' => $u->isActif(),
+            ];
+        }, $utilisateurs));
+    }
+
+    // Desactiver un compte employe (reserve au patron)
+    #[Route('/api/utilisateurs/{id}/desactiver', name: 'api_utilisateur_desactiver', methods: ['PATCH'])]
+    public function desactiverUtilisateur(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $utilisateur = $em->getRepository(User::class)->find($id);
+        if (!$utilisateur) {
+            return $this->json(['message' => 'Utilisateur introuvable.'], 404);
+        }
+        if (in_array('ROLE_PATRON', $utilisateur->getRoles(), true)) {
+            return $this->json(['message' => 'Impossible de desactiver un compte Patron.'], 400);
+        }
+        $utilisateur->setActif(false);
+        $em->flush();
+        return $this->json(['message' => 'Compte desactive avec succes.']);
+    }
+
     // Exemple de route protégée simple (équivalent du dashboard qu'on avait en Node)
     #[Route('/api/dashboard', name: 'api_dashboard', methods: ['GET'])]
     public function dashboard(): JsonResponse
