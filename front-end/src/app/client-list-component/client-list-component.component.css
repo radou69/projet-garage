@@ -1,0 +1,85 @@
+.client-list-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.client-list-container h1 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f4f5f7;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: #fafafa;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header-row h1 {
+  margin: 0;
+}
+
+.new-btn {
+  background-color: #3d5afe;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.new-btn:hover {
+  background-color: #303f9f;
+}
+
+.edit-link {
+  color: #3d5afe;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.edit-link:hover {
+  text-decoration: underline;
+}
+
+.archive-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.archive-btn:hover {
+  background-color: #e74c3c;
+  color: white;
+}

@@ -1,0 +1,51 @@
+<div class="vehicule-list-container">
+  <div class="header-row">
+    <h1>Véhicules</h1>
+    <a routerLink="/vehicules/nouveau" class="new-btn">+ Nouveau véhicule</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (vehicules.length === 0 && !errorMessage) {
+    <p>Aucun véhicule pour le moment.</p>
+  }
+
+  @if (vehicules.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Immatriculation</th>
+            <th>Année</th>
+            <th>Kilométrage</th>
+            <th>Carburant</th>
+            <th>Client</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (vehicule of vehicules; track vehicule.id) {
+            <tr>
+              <td>{{ vehicule.marque }}</td>
+              <td>{{ vehicule.modele }}</td>
+              <td>{{ vehicule.immatriculation }}</td>
+              <td>{{ vehicule.annee }}</td>
+              <td>{{ vehicule.kilometrage }} km</td>
+              <td>{{ vehicule.carburant }}</td>
+              <td>{{ vehicule.client.prenom }} {{ vehicule.client.nom }}</td>
+              <td><a [routerLink]="['/vehicules/modifier', vehicule.id]" class="edit-link">Modifier</a></td>
+              <td><button (click)="archiveVehicule(vehicule.id!, vehicule.immatriculation)" class="archive-btn">Archiver</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

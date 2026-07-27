@@ -1,0 +1,51 @@
+<div class="reparation-list-container">
+  <div class="header-row">
+    <h1>Réparations</h1>
+    <a routerLink="/reparations/nouveau" class="new-btn">+ Nouvelle réparation</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (reparations.length === 0 && !errorMessage) {
+    <p>Aucune réparation pour le moment.</p>
+  }
+
+  @if (reparations.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Véhicule</th>
+            <th>Description</th>
+            <th>Coût total</th>
+            <th>Statut</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of reparations; track r.id) {
+            <tr>
+              <td>{{ r.date }}</td>
+              <td>{{ r.vehicule.marque }} {{ r.vehicule.modele }} ({{ r.vehicule.immatriculation }})</td>
+              <td>{{ r.description }}</td>
+              <td>{{ r.coutTotal }} €</td>
+              <td>{{ r.statut }}</td>
+              <td><a [routerLink]="['/reparations', r.id]" class="edit-link">Gérer les pièces</a></td>
+              <td>
+                @if (peutAnnuler(r)) {
+                  <button (click)="annulerReparation(r.id!)" class="archive-btn">Annuler</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

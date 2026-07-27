@@ -1,0 +1,70 @@
+<div class="form-container">
+  <form (ngSubmit)="onSubmit()" class="vo-form">
+    <h1>{{ isEditMode ? 'Modifier le véhicule' : 'Ajouter au stock' }}</h1>
+
+    <div class="form-group">
+      <label for="marque">Marque</label>
+      <input type="text" id="marque" name="marque" [(ngModel)]="vo.marque" required>
+    </div>
+
+    <div class="form-group">
+      <label for="modele">Modèle</label>
+      <input type="text" id="modele" name="modele" [(ngModel)]="vo.modele" required>
+    </div>
+
+    <div class="form-group">
+      <label for="annee">Année</label>
+      <input type="number" id="annee" name="annee" [(ngModel)]="vo.annee">
+    </div>
+
+    <div class="form-group">
+      <label for="kilometrage">Kilométrage</label>
+      <input type="number" id="kilometrage" name="kilometrage" [(ngModel)]="vo.kilometrage">
+    </div>
+
+    <div class="form-group">
+      <label for="prix">Prix (€)</label>
+      <input type="number" id="prix" name="prix" [(ngModel)]="vo.prix" min="0.01" step="0.01" required>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
+
+    <button type="submit">{{ isEditMode ? 'Enregistrer' : 'Ajouter au stock' }}</button>
+    <a routerLink="/vehicules-occasion" class="back-link">← Retour aux véhicules en vente</a>
+  </form>
+
+  @if (isEditMode) {
+    <div class="statut-info">
+      <p>Statut actuel : <strong>{{ statutActuel }}</strong></p>
+      @if (clientActuel) {
+        <p>Acheteur : <strong>{{ clientActuel }}</strong></p>
+      }
+    </div>
+
+    @if (statutActuel !== 'vendu' && authService.isPatron()) {
+      <div class="vente-form">
+        <h2>Vendre ce véhicule</h2>
+        <div class="form-group">
+          <label for="acheteur">Client acheteur</label>
+          <select id="acheteur" name="acheteur" [(ngModel)]="clientAcheteurId">
+            <option [ngValue]="undefined" disabled>Sélectionner un client</option>
+            @for (client of clients; track client.id) {
+              <option [ngValue]="client.id">{{ client.prenom }} {{ client.nom }}</option>
+            }
+          </select>
+        </div>
+        <button (click)="vendreVehicule()" class="vendre-btn">Confirmer la vente</button>
+      </div>
+    }
+
+    @if (statutActuel !== 'vendu' && !authService.isPatron()) {
+      <p class="restriction-notice">Seul le Patron peut finaliser une vente.</p>
+    }
+  }
+</div>

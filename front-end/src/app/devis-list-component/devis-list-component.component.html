@@ -1,0 +1,51 @@
+<div class="devis-list-container">
+  <div class="header-row">
+    <h1>Devis</h1>
+    <a routerLink="/devis/nouveau" class="new-btn">+ Nouveau devis</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (devisListe.length === 0 && !errorMessage) {
+    <p>Aucun devis pour le moment.</p>
+  }
+
+  @if (devisListe.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Montant HT</th>
+            <th>Montant TTC</th>
+            <th>Statut</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (devis of devisListe; track devis.id) {
+            <tr>
+              <td>{{ devis.date }}</td>
+              <td>{{ devis.client.prenom }} {{ devis.client.nom }}</td>
+              <td>{{ devis.montantHt }} €</td>
+              <td>{{ devis.montantTtc }} €</td>
+              <td>{{ devis.statut }}</td>
+              <td><a [routerLink]="['/devis', devis.id]" class="edit-link">Gérer les lignes</a></td>
+              <td>
+                @if (!devis.factureId) {
+                  <button (click)="archiveDevis(devis.id!)" class="archive-btn">Archiver</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

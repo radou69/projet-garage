@@ -1,0 +1,88 @@
+<div class="reparation-detail-container">
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="success-message">{{ successMessage }}</p>
+  }
+
+  @if (reparation) {
+    <div class="reparation-header">
+      <h1>Réparation — {{ reparation.vehicule.marque }} {{ reparation.vehicule.modele }} ({{ reparation.vehicule.immatriculation }})</h1>
+      <p class="reparation-date">Date : {{ reparation.date }} — {{ reparation.description }}</p>
+
+      @if (reparation.statut === 'terminee' || reparation.statut === 'annulee') {
+        <p class="figee-notice">Cette réparation est {{ reparation.statut }} — plus aucune modification possible.</p>
+      } @else {
+        <div class="form-group statut-group">
+          <label for="statut">Statut</label>
+          <select id="statut" [(ngModel)]="reparation.statut" (ngModelChange)="changerStatut($event)">
+            @for (s of statutsPossibles; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+        </div>
+        <p class="hint">Pour annuler cette réparation, utilise le bouton "Annuler" depuis la liste des réparations.</p>
+      }
+
+      <div class="totaux">
+        <p>Coût total : <strong>{{ reparation.coutTotal }} €</strong></p>
+      </div>
+    </div>
+
+    <h2>Pièces utilisées</h2>
+
+    @if (lignes.length === 0) {
+      <p>Aucune pièce ajoutée pour le moment.</p>
+    }
+
+    @if (lignes.length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Pièce</th>
+              <th>Prix unitaire</th>
+              <th>Quantité</th>
+              <th>Sous-total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ligne of lignes; track ligne.id) {
+              <tr>
+                <td>{{ ligne.piece?.nom }}</td>
+                <td>{{ ligne.piece?.prixUnitaire }} €</td>
+                <td>{{ ligne.quantite }}</td>
+                <td>{{ ligne.sousTotal }} €</td>
+                <td>
+                  @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
+                    <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Retirer</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
+      <form (ngSubmit)="ajouterPiece()" class="piece-form">
+        <h3>Ajouter une pièce</h3>
+        <div class="piece-inputs">
+          <select name="piece" [(ngModel)]="pieceIdSelectionnee">
+            <option [ngValue]="undefined" disabled>Sélectionner une pièce</option>
+            @for (p of catalogue; track p.id) {
+              <option [ngValue]="p.id">{{ p.nom }} ({{ p.prixUnitaire }} €)</option>
+            }
+          </select>
+          <input type="number" name="quantite" [(ngModel)]="quantiteSaisie" min="1" placeholder="Qté">
+          <button type="submit">Ajouter</button>
+        </div>
+      </form>
+    }
+  }
+
+  <a routerLink="/reparations" class="back-link">← Retour aux réparations</a>
+</div>

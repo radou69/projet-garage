@@ -1,0 +1,32 @@
+<div class="form-container">
+  <form (ngSubmit)="onSubmit()" class="reparation-form">
+    <h1>Nouvelle réparation</h1>
+
+    <div class="form-group">
+      <label for="vehicule">Véhicule</label>
+      <select id="vehicule" name="vehicule_id" [(ngModel)]="vehiculeId" required>
+        <option [ngValue]="undefined" disabled>Sélectionner un véhicule</option>
+        @for (v of vehicules; track v.id) {
+          <option [ngValue]="v.id">{{ v.marque }} {{ v.modele }} ({{ v.immatriculation }})</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input type="date" id="date" name="date" [(ngModel)]="date" required>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input type="text" id="description" name="description" [(ngModel)]="description">
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <button type="submit">Créer la réparation</button>
+    <a routerLink="/reparations" class="back-link">← Retour aux réparations</a>
+  </form>
+</div>

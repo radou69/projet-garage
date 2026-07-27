@@ -1,0 +1,49 @@
+<div class="vo-list-container">
+  <div class="header-row">
+    <h1>Véhicules en vente</h1>
+    <a routerLink="/vehicules-occasion/nouveau" class="new-btn">+ Ajouter au stock</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (vehicules.length === 0 && !errorMessage) {
+    <p>Aucun véhicule en stock pour le moment.</p>
+  }
+
+  @if (vehicules.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Année</th>
+            <th>Kilométrage</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Acheteur</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (vo of vehicules; track vo.id) {
+            <tr>
+              <td>{{ vo.marque }}</td>
+              <td>{{ vo.modele }}</td>
+              <td>{{ vo.annee }}</td>
+              <td>{{ vo.kilometrage }} km</td>
+              <td>{{ vo.prix }} €</td>
+              <td>{{ vo.statut }}</td>
+              <td>{{ vo.client ? (vo.client.prenom + ' ' + vo.client.nom) : '—' }}</td>
+              <td><a [routerLink]="['/vehicules-occasion/modifier', vo.id]" class="edit-link">Gérer</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

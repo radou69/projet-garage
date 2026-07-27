@@ -1,0 +1,47 @@
+<div class="client-list-container">
+  <div class="header-row">
+    <h1>Clients</h1>
+    <a routerLink="/clients/nouveau" class="new-btn">+ Nouveau client</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (clients.length === 0 && !errorMessage) {
+    <p>Aucun client pour le moment.</p>
+  }
+
+  @if (clients.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Téléphone</th>
+            <th>Email</th>
+            <th>Adresse</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (client of clients; track client.id) {
+            <tr>
+              <td>{{ client.nom }}</td>
+              <td>{{ client.prenom }}</td>
+              <td>{{ client.telephone }}</td>
+              <td>{{ client.email }}</td>
+              <td>{{ client.adresse }}</td>
+              <td><a [routerLink]="['/clients/modifier', client.id]" class="edit-link">Modifier</a></td>
+              <td><button (click)="archiveClient(client.id!, client.nom)" class="archive-btn">Archiver</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>

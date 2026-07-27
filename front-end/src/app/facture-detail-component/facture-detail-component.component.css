@@ -1,0 +1,173 @@
+.facture-detail-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.error-message {
+  color: #e74c3c;
+  margin-bottom: 1rem;
+}
+
+.success-message {
+  color: #27ae60;
+  margin-bottom: 1rem;
+}
+
+.facture-header {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.facture-header h1 {
+  color: #2c3e50;
+  margin: 0 0 0.3rem 0;
+  font-size: 1.5rem;
+}
+
+.facture-date {
+  color: #7f8c8d;
+  margin: 0 0 1rem 0;
+}
+
+.totaux {
+  margin-bottom: 1rem;
+}
+
+.totaux p {
+  margin: 0.3rem 0;
+  color: #2c3e50;
+}
+
+.figee-notice {
+  background-color: #fff8e1;
+  border: 1px solid #ffe082;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  color: #8a6d00;
+  font-size: 0.9rem;
+}
+
+.actions-facture {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.acompte-form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.acompte-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.acompte-inputs input {
+  padding: 0.5rem;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  width: 130px;
+}
+
+.acompte-inputs button {
+  background-color: #3d5afe;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.acompte-inputs button:hover {
+  background-color: #303f9f;
+}
+
+.cancel-facture-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.cancel-facture-btn:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+h2 {
+  color: #2c3e50;
+  font-size: 1.2rem;
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+.lignes-info {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+table {
+  width: 100%;
+  min-width: 450px;
+  border-collapse: collapse;
+  background: white;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+
+th {
+  background-color: #f4f5f7;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: #3d5afe;
+}
+
+@media (max-width: 600px) {
+  .facture-detail-container {
+    padding: 0 1rem;
+  }
+
+  .actions-facture {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

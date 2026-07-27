@@ -1,0 +1,49 @@
+<div class="rdv-list-container">
+  <div class="header-row">
+    <h1>Rendez-vous</h1>
+    <a routerLink="/rendez-vous/nouveau" class="new-btn">+ Nouveau rendez-vous</a>
+  </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (rdvs.length === 0 && !errorMessage) {
+    <p>Aucun rendez-vous pour le moment.</p>
+  }
+
+  @if (rdvs.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date / Heure</th>
+            <th>Description</th>
+            <th>Statut</th>
+            <th>Client</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rdv of rdvs; track rdv.id) {
+            <tr>
+              <td>{{ rdv.dateHeure }}</td>
+              <td>{{ rdv.description }}</td>
+              <td>{{ rdv.statut }}</td>
+              <td>{{ rdv.client.prenom }} {{ rdv.client.nom }}</td>
+              <td><a [routerLink]="['/rendez-vous/modifier', rdv.id]" class="edit-link">Modifier</a></td>
+              <td>
+                @if (rdv.statut !== 'annule' && rdv.statut !== 'termine') {
+                  <button (click)="cancelRdv(rdv.id!)" class="archive-btn">Annuler</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+</div>
