@@ -24,19 +24,23 @@ class AuthController extends AbstractController
         $nom = $data['nom'] ?? null;
         $email = $data['email'] ?? null;
         $motDePasse = $data['mot_de_passe'] ?? null;
+        $nomGarage = $data['nom_garage'] ?? null;
+        $adresseGarage = $data['adresse_garage'] ?? null;
 
-        if (!$nom || !$email || !$motDePasse) {
+        if (!$nom || !$email || !$motDePasse || !$nomGarage || !$adresseGarage) {
             return $this->json(['message' => 'Nom, email et mot de passe sont obligatoires.'], 400);
         }
 
         $existant = $em->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($existant) {
-            return $this->json(['message' => 'Cet email est déjà utilisé.'], 409);
+            return $this->json(['message' => 'Nom, email, mot de passe, nom et adresse du garage sont obligatoires.'], 400);
         }
 
         $user = new User();
         $user->setNom($nom);
         $user->setEmail($email);
+        $user->setNomGarage($nomGarage);
+        $user->setAdresseGarage($adresseGarage);
         $user->setRoles(['ROLE_PATRON']);
         $user->setPassword($passwordHasher->hashPassword($user, $motDePasse));
 
