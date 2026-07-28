@@ -1,47 +1,73 @@
-<div class="client-list-container">
-  <div class="header-row">
-    <h1>Clients</h1>
-    <a routerLink="/clients/nouveau" class="new-btn">+ Nouveau client</a>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (clients.length === 0 && !errorMessage) {
-    <p>Aucun client pour le moment.</p>
-  }
-
-  @if (clients.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Téléphone</th>
-            <th>Email</th>
-            <th>Adresse</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (client of clients; track client.id) {
-            <tr>
-              <td>{{ client.nom }}</td>
-              <td>{{ client.prenom }}</td>
-              <td>{{ client.telephone }}</td>
-              <td>{{ client.email }}</td>
-              <td>{{ client.adresse }}</td>
-              <td><a [routerLink]="['/clients/modifier', client.id]" class="edit-link">Modifier</a></td>
-              <td><button (click)="archiveClient(client.id!, client.nom)" class="archive-btn">Archiver</button></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="clients-page">
+  <header class="clients-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="clients-body">
+    <h2>Clients</h2>
+    <p class="subtitle">{{ clients.length }} client{{ clients.length > 1 ? 's' : '' }} enregistré{{ clients.length > 1 ? 's' : '' }}</p>
+
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Recherche par nom, téléphone, véhicule">
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <p class="section-label">Résultats</p>
+
+    @if (clientsFiltres.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucun client trouvé.</p>
+    }
+
+    @if (clientsFiltres.length > 0) {
+      <ul class="client-list">
+        @for (client of clientsFiltres; track client.id) {
+          <li class="client-row">
+            <div class="client-avatar" [style.background-color]="avatarColor(client.id)">{{ initiales(client.nom, client.prenom) }}</div>
+            <div class="client-identity">
+              <p class="client-nom">{{ client.prenom }} {{ client.nom }}</p>
+              <p class="client-detail">
+                @if (vehiculePrincipal(client.id!); as v) {
+                  {{ v.marque }} {{ v.modele }} · {{ client.telephone }}
+                } @else {
+                  {{ client.telephone }}
+                }
+              </p>
+            </div>
+            <div class="client-actions">
+              <a [routerLink]="['/clients/modifier', client.id]" class="edit-link">Modifier</a>
+              <button (click)="archiveClient(client.id!, client.nom)" class="archive-btn">Archiver</button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <a routerLink="/clients/nouveau" class="new-btn">+ Nouveau client</a>
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>

@@ -1,113 +1,138 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
-    <h1>AutoGest</h1>
-    <div class="header-actions">
-      <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M12 2v10"/>
-          <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
-        </svg>
-      </button>
-      <button class="icon-btn" aria-label="Menu">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M4 6h16"/>
-          <path d="M4 12h16"/>
-          <path d="M4 18h16"/>
-        </svg>
-      </button>
+    <div class="header-content">
+      <h1>AutoGest</h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
   <div class="welcome-banner">
-    <h2>Bienvenue Michel</h2>
-    <p>Votre garage sous contrôle aujourd'hui.</p>
+    <div class="banner-content">
+      <h2>Bienvenue</h2>
+      <p>Votre garage sous contrôle aujourd'hui.</p>
+    </div>
   </div>
 
-  <nav class="dashboard-nav">
-    <a routerLink="/clients" class="nav-card">
-      <span class="nav-icon icon-clients">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
-        </svg>
-      </span>
-      <span class="nav-badge">15</span>
-      <h2>Clients</h2>
-    </a>
+  <div class="dashboard-body">
+    <svg class="mechanic-motif" viewBox="0 0 340 420" aria-hidden="true">
+      <circle cx="170" cy="210" r="18" />
+      <circle cx="170" cy="210" r="65" />
+      <circle cx="170" cy="210" r="115" />
+      <circle cx="170" cy="210" r="165" />
+      <line x1="170" y1="45" x2="170" y2="375" />
+      <line x1="5" y1="210" x2="335" y2="210" />
+      <line x1="52" y1="92" x2="288" y2="328" />
+      <line x1="288" y1="92" x2="52" y2="328" />
+    </svg>
 
-    <a routerLink="/rendez-vous" class="nav-card">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24" width="26" height="26">
-          <rect x="2" y="2" width="20" height="20" rx="6" fill="var(--color-green)"/>
-          <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      <span class="nav-badge">8</span>
-      <h2>Rendez-vous</h2>
-    </a>
+    <nav class="dashboard-nav">
+      <a routerLink="/clients" class="nav-card">
+        <span class="nav-icon icon-clients">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+          </svg>
+        </span>
+        <span class="nav-badge">15</span>
+        <h2>Clients</h2>
+      </a>
 
-    <a routerLink="/reparations" class="nav-card">
-      <span class="nav-icon icon-reparations">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-        </svg>
-      </span>
-      <span class="nav-badge">3</span>
-      <h2>Réparations</h2>
-    </a>
+      <a routerLink="/rendez-vous" class="nav-card">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24">
+            <rect x="2" y="2" width="20" height="20" rx="6" fill="var(--color-green)"/>
+            <path d="M7 12.5l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="nav-badge">8</span>
+        <h2>Rendez-vous</h2>
+      </a>
 
-    <a routerLink="/factures" class="nav-card">
-      <span class="nav-icon icon-factures">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
-          <path d="M14 3v5h5"/>
-          <path d="M9 13h6"/>
-          <path d="M9 17h6"/>
-        </svg>
-      </span>
-      <span class="nav-badge">4</span>
-      <h2>Factures</h2>
-    </a>
+      <a routerLink="/reparations" class="nav-card">
+        <span class="nav-icon icon-reparations">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </span>
+        <span class="nav-badge">3</span>
+        <h2>Réparations</h2>
+      </a>
 
-    <a routerLink="/vehicules" class="nav-card">
-      <span class="nav-icon icon-vehicules">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
-          <circle cx="6.5" cy="16.5" r="2.5"/>
-          <circle cx="16.5" cy="16.5" r="2.5"/>
-        </svg>
-      </span>
-      <span class="nav-badge">6</span>
-      <h2>Véhicules</h2>
-    </a>
+      <a routerLink="/factures" class="nav-card">
+        <span class="nav-icon icon-factures">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+            <path d="M14 3v5h5"/>
+            <path d="M9 13h6"/>
+            <path d="M9 17h6"/>
+          </svg>
+        </span>
+        <span class="nav-badge">4</span>
+        <h2>Factures</h2>
+      </a>
 
-    <a routerLink="/devis" class="nav-card">
-      <span class="nav-icon icon-devis">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
-          <path d="M14 3v5h5"/>
-          <path d="M9 12h6"/>
-          <path d="M9 16h4"/>
-        </svg>
-      </span>
-      <span class="nav-badge">7</span>
-      <h2>Devis</h2>
-    </a>
+      <a routerLink="/vehicules" class="nav-card">
+        <span class="nav-icon icon-vehicules">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
+            <circle cx="6.5" cy="16.5" r="2.5"/>
+            <circle cx="16.5" cy="16.5" r="2.5"/>
+          </svg>
+        </span>
+        <span class="nav-badge">6</span>
+        <h2>Véhicules</h2>
+      </a>
 
-    <a routerLink="/vehicules-occasion" class="nav-card nav-card-full">
-      <span class="nav-icon icon-occasion">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m21 2-9.6 9.6"/>
-          <circle cx="7.5" cy="15.5" r="5.5"/>
-          <path d="m15.5 7.5 3 3L22 7l-3-3"/>
-        </svg>
-      </span>
-      <span class="nav-badge">4</span>
-      <h2>Véhicules en vente</h2>
-    </a>
+      <a routerLink="/devis" class="nav-card">
+        <span class="nav-icon icon-devis">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+            <path d="M14 3v5h5"/>
+            <path d="M9 12h6"/>
+            <path d="M9 16h4"/>
+          </svg>
+        </span>
+        <span class="nav-badge">7</span>
+        <h2>Devis</h2>
+      </a>
 
-    <a routerLink="/employes" class="nav-card nav-card-full">
-      <h2>Employés</h2>
-    </a>
-  </nav>
+      <a routerLink="/vehicules-occasion" class="nav-card nav-card-full">
+        <span class="nav-icon icon-occasion">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m21 2-9.6 9.6"/>
+            <circle cx="7.5" cy="15.5" r="5.5"/>
+            <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+          </svg>
+        </span>
+        <span class="nav-badge">4</span>
+        <h2>Véhicules en vente</h2>
+      </a>
+
+      <a routerLink="/employes" class="nav-card">
+        <span class="nav-icon icon-employes">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        <h2>Employés</h2>
+      </a>
+    </nav>
+  </div>
 </div>

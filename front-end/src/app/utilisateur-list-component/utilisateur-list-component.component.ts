@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UtilisateurService, Utilisateur } from '../services/utilisateur.service';
 import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-utilisateur-list-component',
@@ -16,7 +17,9 @@ export class UtilisateurListComponentComponent implements OnInit {
 
   constructor(
     private utilisateurService: UtilisateurService,
-    public authService: AuthService
+    public authService: AuthService,
+    private router: Router,
+    public menuState: MenuStateService
   ) {}
 
   ngOnInit(): void {
@@ -51,5 +54,21 @@ export class UtilisateurListComponentComponent implements OnInit {
         this.errorMessage = err.error?.message || 'Impossible de désactiver ce compte.';
       }
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
+
+  initiales(nom: string): string {
+    const parts = nom.trim().split(/\s+/).filter(p => p.length > 0);
+    const first = parts[0]?.charAt(0) ?? '';
+    const second = parts[1]?.charAt(0) ?? '';
+    return (first + second).toUpperCase();
   }
 }

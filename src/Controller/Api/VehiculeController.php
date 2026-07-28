@@ -56,8 +56,8 @@ class VehiculeController extends AbstractController
     }
 
     // Créer un véhicule — client obligatoire (contrairement à VehiculeOccasion)
-    #[Route('/api/vehicules', name: 'api_vehicules_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, ClientRepository $clientRepo): JsonResponse
+    #[Route('/api/vehicules', name: 'api_vehicules_create', methods:['POST'])]
+    public function create(Request $request, EntityManagerInterface $em, ClientRepository $clientRepo, VehiculeRepository $vehiculeRepo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -72,6 +72,11 @@ class VehiculeController extends AbstractController
         $client = $clientRepo->find($data['client_id']);
         if (!$client || !$client->isActif()) {
             return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
+        }
+
+        $existant = $vehiculeRepo->findOneBy(['immatriculation' => $data['immatriculation']]);
+        if ($existant) {
+            return $this->json(['message' => 'Cette immatriculation est déjà utilisée.'], 409);
         }
 
         $vehicule = new Vehicule();
@@ -100,9 +105,16 @@ class VehiculeController extends AbstractController
 
     // Modifier un véhicule
     #[Route('/api/vehicules/{id}', name: 'api_vehicules_update', methods: ['PUT'])]
-    public function update(Request $request, Vehicule $vehicule, EntityManagerInterface $em, ClientRepository $clientRepo): JsonResponse
+    public function update(Request $request, Vehicule $vehicule, EntityManagerInterface $em, ClientRepository $clientRepo, VehiculeRepository $vehiculeRepo): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+
+        if (isset($data['immatriculation']) && $data['immatriculation'] !== $vehicule->getImmatriculation()) {
+            $existant = $vehiculeRepo->findOneBy(['immatriculation' => $data['immatriculation']]);
+            if ($existant) {
+                return $this->json(['message' => 'Cette immatriculation est déjà utilisée.'], 409);
+            }
+        }
 
         if (isset($data['marque'])) $vehicule->setMarque($data['marque']);
         if (isset($data['modele'])) $vehicule->setModele($data['modele']);

@@ -1,0 +1,42 @@
+<aside class="menu-panel" [class.open]="menuState.isOpen()">
+  <header class="menu-header">
+    <h1>AutoGest</h1>
+    <button (click)="close()" class="icon-btn" aria-label="Fermer le menu">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6 6l12 12"/>
+        <path d="M18 6l-12 12"/>
+      </svg>
+    </button>
+  </header>
+
+  <div class="menu-profile">
+    <div class="menu-avatar">{{ initials }}</div>
+    <div class="menu-identity">
+      <p class="menu-name">{{ username }}</p>
+      <p class="menu-role">{{ isPatron ? 'Patron' : 'Employé' }}</p>
+    </div>
+  </div>
+
+  <nav class="menu-links">
+    <a routerLink="/dashboard" routerLinkActive="active-link" (click)="close()">Tableau de bord</a>
+    <a routerLink="/clients" routerLinkActive="active-link" (click)="close()">Clients</a>
+    <a routerLink="/vehicules" routerLinkActive="active-link" (click)="close()">Véhicules</a>
+    <a routerLink="/rendez-vous" routerLinkActive="active-link" (click)="close()">Rendez-vous</a>
+    <a routerLink="/reparations" routerLinkActive="active-link" (click)="close()">Réparations</a>
+    <a routerLink="/devis" routerLinkActive="active-link" (click)="close()">Devis</a>
+    <a routerLink="/factures" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+      <span>Factures</span>
+      <span class="badge-patron">PATRON</span>
+    </a>
+    <a routerLink="/vehicules-occasion" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+      <span>Véhicules d'occasion</span>
+      <span class="badge-patron">PATRON</span>
+    </a>
+    <a routerLink="/employes" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+      <span>Employés</span>
+      <span class="badge-patron">PATRON</span>
+    </a>
+  </nav>
+
+  <button class="logout-btn" (click)="logout()">Déconnexion</button>
+</aside>

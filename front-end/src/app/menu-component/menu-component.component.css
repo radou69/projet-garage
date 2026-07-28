@@ -1,0 +1,121 @@
+:host {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-gold: #C9A227;
+  --color-red: #e53935;
+}
+
+.menu-panel {
+  position: fixed;
+  inset: 0;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  z-index: 1000;
+  overflow-y: auto;
+}
+.menu-panel.open {
+  transform: translateX(0);
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background-color: #000000;
+}
+.menu-header h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+.menu-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1.25rem;
+}
+.menu-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #555555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.menu-name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  word-break: break-all;
+}
+.menu-role {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: #b0b0b0;
+}
+
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 1.25rem;
+  flex: 1;
+}
+.menu-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.menu-links a.active-link {
+  color: var(--color-gold);
+}
+.badge-patron {
+  background-color: #f5deb3;
+  color: #6b4e00;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 1.5rem;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+@media (min-width: 600px) {
+  .menu-panel {
+    width: 340px;
+    inset: 0 auto 0 0;
+  }
+}
