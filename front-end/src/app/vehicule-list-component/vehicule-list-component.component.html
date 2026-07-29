@@ -1,66 +1,51 @@
-<div class="vehicules-page">
-  <header class="vehicules-header">
-    <div class="header-content">
-      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
-      <div class="header-actions">
-        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M12 2v10"/>
-            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
-          </svg>
-        </button>
-        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M4 6h16"/>
-            <path d="M4 12h16"/>
-            <path d="M4 18h16"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <div class="vehicules-body">
-    <h2>Véhicules</h2>
-    <p class="subtitle">Rechercher un client par son véhicule</p>
-
-    <div class="search-bar">
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Marques, modèles, immatriculation...">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="7"/>
-        <path d="m21 21-4.3-4.3"/>
-      </svg>
-    </div>
-
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
-    }
-
-    <p class="section-label">Résultats</p>
-
-    @if (vehiculesFiltres.length === 0 && !errorMessage) {
-      <p class="empty-message">Aucun véhicule trouvé.</p>
-    }
-
-    @if (vehiculesFiltres.length > 0) {
-      <ul class="vehicule-list">
-        @for (vehicule of vehiculesFiltres; track vehicule.id) {
-          <li class="vehicule-row">
-            <a [routerLink]="['/vehicules', vehicule.id]" class="vehicule-info">
-              <p class="vehicule-titre">{{ vehicule.marque }} {{ vehicule.modele }} — {{ vehicule.annee }}</p>
-              <p class="vehicule-detail">{{ vehicule.immatriculation }} · {{ vehicule.client.prenom }} {{ vehicule.client.nom }}</p>
-            </a>
-            <div class="vehicule-actions">
-              <a [routerLink]="['/vehicules/modifier', vehicule.id]" class="edit-link">Modifier</a>
-              <button (click)="archiveVehicule(vehicule.id!, vehicule.immatriculation)" class="archive-btn">Archiver</button>
-            </div>
-          </li>
-        }
-      </ul>
-    }
-
+<div class="vehicule-list-container">
+  <div class="header-row">
+    <h1>Véhicules</h1>
     <a routerLink="/vehicules/nouveau" class="new-btn">+ Nouveau véhicule</a>
-
-    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
   </div>
+
+  @if (errorMessage) {
+    <p class="error-message">{{ errorMessage }}</p>
+  }
+
+  @if (vehicules.length === 0 && !errorMessage) {
+    <p>Aucun véhicule pour le moment.</p>
+  }
+
+  @if (vehicules.length > 0) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Immatriculation</th>
+            <th>Année</th>
+            <th>Kilométrage</th>
+            <th>Carburant</th>
+            <th>Client</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (vehicule of vehicules; track vehicule.id) {
+            <tr>
+              <td>{{ vehicule.marque }}</td>
+              <td>{{ vehicule.modele }}</td>
+              <td>{{ vehicule.immatriculation }}</td>
+              <td>{{ vehicule.annee }}</td>
+              <td>{{ vehicule.kilometrage }} km</td>
+              <td>{{ vehicule.carburant }}</td>
+              <td>{{ vehicule.client.prenom }} {{ vehicule.client.nom }}</td>
+              <td><a [routerLink]="['/vehicules/modifier', vehicule.id]" class="edit-link">Modifier</a></td>
+              <td><button (click)="archiveVehicule(vehicule.id!, vehicule.immatriculation)" class="archive-btn">Archiver</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
 </div>

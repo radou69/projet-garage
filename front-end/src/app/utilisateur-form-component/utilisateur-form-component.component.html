@@ -1,54 +1,31 @@
-<div class="employe-form-page">
-  <header class="form-header">
-    <div class="header-content">
-      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
-      <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M12 2v10"/>
-          <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
-        </svg>
-      </button>
+<div class="form-container">
+  <form (ngSubmit)="onSubmit()" class="utilisateur-form">
+    <h1>Créer un compte employé</h1>
+
+    <div class="form-group">
+      <label for="nom">Nom complet</label>
+      <input type="text" id="nom" name="nom" [(ngModel)]="nom" required>
     </div>
-  </header>
 
-  <div class="form-body">
-    <a routerLink="/employes" class="breadcrumb">Employés</a>
-    <h2>Nouveau compte employé</h2>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" [(ngModel)]="email" required>
+    </div>
 
-    <form (ngSubmit)="onSubmit()" class="utilisateur-form">
-      <div class="form-group">
-        <label for="nom">Nom complet</label>
-        <input type="text" id="nom" name="nom" [(ngModel)]="nom" required>
-      </div>
+    <div class="form-group">
+      <label for="motDePasse">Mot de passe provisoire</label>
+      <input type="password" id="motDePasse" name="motDePasse" [(ngModel)]="motDePasse" required>
+    </div>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" [(ngModel)]="email" required>
-      </div>
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
 
-      <div class="form-group">
-        <label for="motDePasse">Mot de passe provisoire</label>
-        <input type="password" id="motDePasse" name="motDePasse" [(ngModel)]="motDePasse" required>
-      </div>
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
 
-      <div class="form-group">
-        <label for="role">Rôle</label>
-        <select id="role" disabled class="role-select">
-          <option selected>Employé</option>
-        </select>
-        <p class="role-hint">Le rôle "employé" est assigné automatiquement.</p>
-      </div>
-
-      @if (errorMessage) {
-        <p class="error-message">{{ errorMessage }}</p>
-      }
-
-      @if (successMessage) {
-        <p class="success-message">{{ successMessage }}</p>
-      }
-
-      <button type="submit">Créer le compte</button>
-      <a routerLink="/employes" class="back-link">← Retour aux employés</a>
-    </form>
-  </div>
+    <button type="submit">Créer le compte</button>
+    <a routerLink="/employes" class="back-link">← Retour aux employés</a>
+  </form>
 </div>

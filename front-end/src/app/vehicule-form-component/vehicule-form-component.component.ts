@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { VehiculeService, VehiculeCreatePayload } from '../services/vehicule.service';
 import { ClientService, Client } from '../services/client.service';
+
 @Component({
   selector: 'app-vehicule-form-component',
   imports: [CommonModule, FormsModule, RouterLink],
@@ -21,17 +22,20 @@ export class VehiculeFormComponentComponent implements OnInit {
     kilometrage: undefined as any,
     client_id: undefined as any
   };
+
   clients: Client[] = [];
   vehiculeId: number | null = null;
   isEditMode = false;
   errorMessage = '';
   successMessage = '';
+
   constructor(
     private vehiculeService: VehiculeService,
     private clientService: ClientService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
   ngOnInit(): void {
     this.clientService.getAll().subscribe({
       next: (data) => {
@@ -41,6 +45,7 @@ export class VehiculeFormComponentComponent implements OnInit {
         this.errorMessage = 'Impossible de charger la liste des clients.';
       }
     });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       this.isEditMode = true;
@@ -64,19 +69,22 @@ export class VehiculeFormComponentComponent implements OnInit {
       });
     }
   }
+
   onSubmit(): void {
     this.errorMessage = '';
     this.successMessage = '';
+
     const request = this.isEditMode && this.vehiculeId
       ? this.vehiculeService.update(this.vehiculeId, this.vehicule)
       : this.vehiculeService.create(this.vehicule);
+
     request.subscribe({
       next: () => {
         this.successMessage = this.isEditMode ? 'Véhicule modifié avec succès.' : 'Véhicule créé avec succès.';
         setTimeout(() => this.router.navigate(['/vehicules']), 1000);
       },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de l\'enregistrement. Vérifiez les champs.';
+      error: () => {
+        this.errorMessage = 'Erreur lors de l\'enregistrement. Vérifiez les champs.';
       }
     });
   }
