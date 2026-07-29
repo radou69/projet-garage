@@ -1,49 +1,80 @@
-<div class="rdv-list-container">
-  <div class="header-row">
-    <h1>Rendez-vous</h1>
-    <a routerLink="/rendez-vous/nouveau" class="new-btn">+ Nouveau rendez-vous</a>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (rdvs.length === 0 && !errorMessage) {
-    <p>Aucun rendez-vous pour le moment.</p>
-  }
-
-  @if (rdvs.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Date / Heure</th>
-            <th>Description</th>
-            <th>Statut</th>
-            <th>Client</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (rdv of rdvs; track rdv.id) {
-            <tr>
-              <td>{{ rdv.dateHeure }}</td>
-              <td>{{ rdv.description }}</td>
-              <td>{{ rdv.statut }}</td>
-              <td>{{ rdv.client.prenom }} {{ rdv.client.nom }}</td>
-              <td><a [routerLink]="['/rendez-vous/modifier', rdv.id]" class="edit-link">Modifier</a></td>
-              <td>
-                @if (rdv.statut !== 'annule' && rdv.statut !== 'termine') {
-                  <button (click)="cancelRdv(rdv.id!)" class="archive-btn">Annuler</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="rdv-page">
+  <header class="rdv-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="rdv-body">
+    <h2>Rendez-vous</h2>
+
+    <div class="date-nav">
+      <button class="nav-arrow" (click)="jourPrecedent()" aria-label="Jour précédent">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span class="date-label">{{ labelDateComplete() }}</span>
+      <button class="nav-arrow" (click)="jourSuivant()" aria-label="Jour suivant">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="day-tabs">
+      @for (jour of joursSemaine; track jour.getTime()) {
+        <button class="day-tab" [class.active]="estJourSelectionne(jour)" (click)="selectionnerJour(jour)">
+          {{ labelJourCourt(jour) }}
+        </button>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <p class="section-label">{{ rdvsDuJour.length }} RENDEZ-VOUS</p>
+
+    @if (rdvsDuJour.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucun rendez-vous ce jour-là.</p>
+    }
+
+    @for (rdv of rdvsDuJour; track rdv.id) {
+      <div class="rdv-row" [class]="'border-' + rdv.statut">
+        <div class="rdv-heure">{{ heure(rdv.dateHeure) }}</div>
+        <div class="rdv-info">
+          <p class="rdv-client">{{ rdv.client.prenom }} {{ rdv.client.nom }}</p>
+          @if (rdv.description) {
+            <p class="rdv-desc">{{ rdv.description }}</p>
+          }
+          <span class="statut-badge" [class]="'statut-' + rdv.statut">{{ statutLabel(rdv.statut) }}</span>
+        </div>
+        <div class="rdv-actions">
+          <a [routerLink]="['/rendez-vous/modifier', rdv.id]" class="edit-link">Modifier</a>
+          @if (rdv.statut !== 'annule' && rdv.statut !== 'termine') {
+            <button (click)="cancelRdv(rdv.id!)" class="cancel-btn">Annuler</button>
+          }
+        </div>
+      </div>
+    }
+
+    <a routerLink="/rendez-vous/nouveau" class="new-btn">
+      <span>Nouveau rendez-vous</span>
+      <span class="plus-circle">+</span>
+    </a>
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>
