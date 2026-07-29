@@ -4,10 +4,17 @@
   --color-red: #e53935;
 }
 
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+}
+
 .menu-panel {
   position: fixed;
   inset: 0;
-  background-color: #1a1a1a;
+  background-color: #111111;
   color: #ffffff;
   font-family: var(--font-sans);
   display: flex;
@@ -26,12 +33,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.25rem;
-  background-color: #000000;
+  background-color: #111111;
 }
 .menu-header h1 {
   margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 500;
 }
 .icon-btn {
   background: none;
@@ -46,71 +53,88 @@
 .menu-profile {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem 1.25rem;
+  gap: 12px;
+  padding: 20px 18px;
+  border-bottom: 1px solid #2a2a2a;
 }
 .menu-avatar {
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background-color: #555555;
+  background-color: #2a2a2a;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 500;
+  font-size: 0.95rem;
   flex-shrink: 0;
 }
 .menu-name {
   margin: 0;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.95rem;
   word-break: break-all;
 }
 .menu-role {
   margin: 0.15rem 0 0;
-  font-size: 0.85rem;
-  color: #b0b0b0;
+  font-size: 0.75rem;
+  color: #9ca3af;
 }
 
 .menu-links {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem 1.25rem;
-  flex: 1;
+  padding: 0;
 }
-.menu-links a {
-  color: #ffffff;
+.menu-item {
+  color: #e5e7eb;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid #1c1c1c;
 }
-.menu-links a.active-link {
+.menu-icon {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+.menu-item.link-patron .menu-icon {
   color: var(--color-gold);
 }
+.menu-item.active-link {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  font-weight: 700;
+}
+.menu-item.active-link .menu-icon {
+  color: #ffffff;
+}
 .badge-patron {
+  margin-left: auto;
   background-color: #f5deb3;
   color: #6b4e00;
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
+  text-transform: none;
 }
 
-.logout-btn {
+.logout-row {
   background: none;
   border: none;
   color: var(--color-red);
-  font-weight: 800;
-  font-size: 1.1rem;
-  text-align: center;
-  padding: 1.5rem;
+  font-weight: 500;
+  margin-top: 8px;
   cursor: pointer;
   font-family: var(--font-sans);
+  border-bottom: none;
+}
+.logout-row .menu-icon {
+  color: var(--color-red);
 }
 
 @media (min-width: 600px) {
