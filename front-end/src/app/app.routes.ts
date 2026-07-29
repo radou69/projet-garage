@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
 import { LoginComponentComponent } from './login-component/login-component.component';
+import { InscriptionComponentComponent } from './inscription-component/inscription-component.component';
 import { DashboardComponentComponent } from './dashboard-component/dashboard-component.component';
 import { ClientListComponentComponent } from './client-list-component/client-list-component.component';
 import { ClientFormComponentComponent } from './client-form-component/client-form-component.component';
 import { VehiculeListComponentComponent } from './vehicule-list-component/vehicule-list-component.component';
 import { VehiculeFormComponentComponent } from './vehicule-form-component/vehicule-form-component.component';
+import { VehiculeDetailComponentComponent } from './vehicule-detail-component/vehicule-detail-component.component';
 import { RendezVousListComponentComponent } from './rendez-vous-list-component/rendez-vous-list-component.component';
 import { RendezVousFormComponentComponent } from './rendez-vous-form-component/rendez-vous-form-component.component';
 import { DevisListComponentComponent } from './devis-list-component/devis-list-component.component';
@@ -20,10 +22,12 @@ import { ReparationListComponentComponent } from './reparation-list-component/re
 import { ReparationFormComponentComponent } from './reparation-form-component/reparation-form-component.component';
 import { ReparationDetailComponentComponent } from './reparation-detail-component/reparation-detail-component.component';
 import { authGuard } from './guards/auth.guard';
+import { patronGuard } from './guards/patron.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponentComponent },
+  { path: 'inscription', component: InscriptionComponentComponent },
   { path: 'dashboard', component: DashboardComponentComponent, canActivate: [authGuard] },
   { path: 'clients', component: ClientListComponentComponent, canActivate: [authGuard] },
   { path: 'clients/nouveau', component: ClientFormComponentComponent, canActivate: [authGuard] },
@@ -31,19 +35,20 @@ export const routes: Routes = [
   { path: 'vehicules', component: VehiculeListComponentComponent, canActivate: [authGuard] },
   { path: 'vehicules/nouveau', component: VehiculeFormComponentComponent, canActivate: [authGuard] },
   { path: 'vehicules/modifier/:id', component: VehiculeFormComponentComponent, canActivate: [authGuard] },
+  { path: 'vehicules/:id', component: VehiculeDetailComponentComponent, canActivate: [authGuard] },
   { path: 'rendez-vous', component: RendezVousListComponentComponent, canActivate: [authGuard] },
   { path: 'rendez-vous/nouveau', component: RendezVousFormComponentComponent, canActivate: [authGuard] },
   { path: 'rendez-vous/modifier/:id', component: RendezVousFormComponentComponent, canActivate: [authGuard] },
   { path: 'devis', component: DevisListComponentComponent, canActivate: [authGuard] },
   { path: 'devis/nouveau', component: DevisFormComponentComponent, canActivate: [authGuard] },
   { path: 'devis/:id', component: DevisDetailComponentComponent, canActivate: [authGuard] },
-  { path: 'factures', component: FactureListComponentComponent, canActivate: [authGuard] },
-  { path: 'factures/:id', component: FactureDetailComponentComponent, canActivate: [authGuard] },
-  { path: 'vehicules-occasion', component: VehiculeOccasionListComponentComponent, canActivate: [authGuard] },
-  { path: 'vehicules-occasion/nouveau', component: VehiculeOccasionFormComponentComponent, canActivate: [authGuard] },
-  { path: 'vehicules-occasion/modifier/:id', component: VehiculeOccasionFormComponentComponent, canActivate: [authGuard] },
-  { path: 'employes', component: UtilisateurListComponentComponent, canActivate: [authGuard] },
-  { path: 'employes/nouveau', component: UtilisateurFormComponentComponent, canActivate: [authGuard] },
+  { path: 'factures', component: FactureListComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'factures/:id', component: FactureDetailComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'vehicules-occasion', component: VehiculeOccasionListComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'vehicules-occasion/nouveau', component: VehiculeOccasionFormComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'vehicules-occasion/modifier/:id', component: VehiculeOccasionFormComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'employes', component: UtilisateurListComponentComponent, canActivate: [authGuard, patronGuard] },
+  { path: 'employes/nouveau', component: UtilisateurFormComponentComponent, canActivate: [authGuard, patronGuard] },
   { path: 'reparations', component: ReparationListComponentComponent, canActivate: [authGuard] },
   { path: 'reparations/nouveau', component: ReparationFormComponentComponent, canActivate: [authGuard] },
   { path: 'reparations/:id', component: ReparationDetailComponentComponent, canActivate: [authGuard] }

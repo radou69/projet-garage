@@ -4,26 +4,13 @@
     <p>Connexion</p>
 
     <div class="form-group">
-      <label for="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        [(ngModel)]="email"
-        required
-        placeholder="votre.email@exemple.com"
-      >
+      <label for="email" class="sr-only">Email</label>
+      <input type="email" id="email" name="email" [(ngModel)]="email" required placeholder="Email">
     </div>
 
     <div class="form-group">
-      <label for="password">Mot de passe</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        [(ngModel)]="password"
-        required
-      >
+      <label for="password" class="sr-only">Mot de passe</label>
+      <input type="password" id="password" name="password" [(ngModel)]="password" required placeholder="Mot de passe">
     </div>
 
     @if (errorMessage) {
@@ -31,5 +18,8 @@
     }
 
     <button type="submit">Se connecter</button>
+
+    <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+    <p class="register-link">Pas encore de compte ? <a routerLink="/inscription">Créer un compte</a></p>
   </form>
 </div>

@@ -83,8 +83,8 @@ export class VehiculeFormComponentComponent implements OnInit {
         this.successMessage = this.isEditMode ? 'Véhicule modifié avec succès.' : 'Véhicule créé avec succès.';
         setTimeout(() => this.router.navigate(['/vehicules']), 1000);
       },
-      error: () => {
-        this.errorMessage = 'Erreur lors de l\'enregistrement. Vérifiez les champs.';
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Erreur lors de l\'enregistrement. Vérifiez les champs.';
       }
     });
   }

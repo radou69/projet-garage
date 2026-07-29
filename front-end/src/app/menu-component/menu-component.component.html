@@ -1,3 +1,6 @@
+@if (menuState.isOpen()) {
+  <div class="menu-overlay" (click)="close()"></div>
+}
 <aside class="menu-panel" [class.open]="menuState.isOpen()">
   <header class="menu-header">
     <h1>AutoGest</h1>
@@ -13,30 +16,94 @@
     <div class="menu-avatar">{{ initials }}</div>
     <div class="menu-identity">
       <p class="menu-name">{{ username }}</p>
+      <!-- Le nom du garage (User.nomGarage) n'est pas exposé par le JWT ni par /api/dashboard : à ajouter côté backend pour matcher la maquette ("Patron · Garage Dupont"). -->
       <p class="menu-role">{{ isPatron ? 'Patron' : 'Employé' }}</p>
     </div>
   </div>
 
   <nav class="menu-links">
-    <a routerLink="/dashboard" routerLinkActive="active-link" (click)="close()">Tableau de bord</a>
-    <a routerLink="/clients" routerLinkActive="active-link" (click)="close()">Clients</a>
-    <a routerLink="/vehicules" routerLinkActive="active-link" (click)="close()">Véhicules</a>
-    <a routerLink="/rendez-vous" routerLinkActive="active-link" (click)="close()">Rendez-vous</a>
-    <a routerLink="/reparations" routerLinkActive="active-link" (click)="close()">Réparations</a>
-    <a routerLink="/devis" routerLinkActive="active-link" (click)="close()">Devis</a>
-    <a routerLink="/factures" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+    <a routerLink="/dashboard" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5 12 3l9 6.5"/>
+        <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>
+      </svg>
+      <span>Tableau de bord</span>
+    </a>
+    <a routerLink="/clients" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/>
+      </svg>
+      <span>Clients</span>
+    </a>
+    <a routerLink="/vehicules" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
+        <circle cx="6.5" cy="16.5" r="2.5"/>
+        <circle cx="16.5" cy="16.5" r="2.5"/>
+      </svg>
+      <span>Véhicules</span>
+    </a>
+    <a routerLink="/rendez-vous" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span>Rendez-vous</span>
+    </a>
+    <a routerLink="/reparations" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      </svg>
+      <span>Réparations</span>
+    </a>
+    <a routerLink="/devis" routerLinkActive="active-link" (click)="close()" class="menu-item">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+        <path d="M14 3v5h5"/>
+        <path d="M9 12h6"/>
+        <path d="M9 16h4"/>
+      </svg>
+      <span>Devis</span>
+    </a>
+    <a routerLink="/factures" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="menu-item link-patron">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+        <path d="M14 3v5h5"/>
+        <path d="M9 13h6"/>
+        <path d="M9 17h6"/>
+      </svg>
       <span>Factures</span>
-      <span class="badge-patron">PATRON</span>
+      <span class="badge-patron">Patron</span>
     </a>
-    <a routerLink="/vehicules-occasion" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+    <a routerLink="/vehicules-occasion" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="menu-item link-patron">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m21 2-9.6 9.6"/>
+        <circle cx="7.5" cy="15.5" r="5.5"/>
+        <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+      </svg>
       <span>Véhicules d'occasion</span>
-      <span class="badge-patron">PATRON</span>
+      <span class="badge-patron">Patron</span>
     </a>
-    <a routerLink="/employes" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="link-patron">
+    <a routerLink="/employes" routerLinkActive="active-link" (click)="close()" *ngIf="isPatron" class="menu-item link-patron">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
       <span>Employés</span>
-      <span class="badge-patron">PATRON</span>
+      <span class="badge-patron">Patron</span>
     </a>
   </nav>
 
-  <button class="logout-btn" (click)="logout()">Déconnexion</button>
+  <button class="menu-item logout-row" (click)="logout()">
+    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M12 2v10"/>
+      <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+    </svg>
+    <span>Déconnexion</span>
+  </button>
 </aside>
