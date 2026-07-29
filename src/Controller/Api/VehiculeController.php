@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\User;
 use App\Entity\Vehicule;
 use App\Repository\ClientRepository;
 use App\Repository\VehiculeRepository;
@@ -35,15 +36,30 @@ class VehiculeController extends AbstractController
         ];
     }
 
+    // Vérifie que le véhicule appartient bien au tenant courant (patron ou son employé) —
+    // 404 (pas 403) pour ne pas confirmer l'existence d'un véhicule d'un autre garage.
+    private function verifierProprietaire(Vehicule $vehicule): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($vehicule->getClient()?->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + recherche (marque, modèle, immatriculation, ou nom du client)
     #[Route('/api/vehicules', name: 'api_vehicules_list', methods: ['GET'])]
     public function list(Request $request, VehiculeRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $search = $request->query->get('search');
 
         $qb = $repo->createQueryBuilder('v')
             ->leftJoin('v.client', 'c')
-            ->andWhere('v.actif = true');
+            ->andWhere('v.actif = true')
+            ->andWhere('c.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
 
         if ($search) {
             $qb->andWhere('v.marque LIKE :s OR v.modele LIKE :s OR v.immatriculation LIKE :s OR c.nom LIKE :s')
@@ -69,8 +85,10 @@ class VehiculeController extends AbstractController
             return $this->json(['message' => 'Le client est obligatoire pour un véhicule.'], 400);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
         $client = $clientRepo->find($data['client_id']);
-        if (!$client || !$client->isActif()) {
+        if (!$client || !$client->isActif() || $client->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
         }
 
@@ -100,6 +118,8 @@ class VehiculeController extends AbstractController
     #[Route('/api/vehicules/{id}', name: 'api_vehicules_show', methods: ['GET'])]
     public function show(Vehicule $vehicule): JsonResponse
     {
+        $this->verifierProprietaire($vehicule);
+
         return $this->json($this->toArray($vehicule));
     }
 
@@ -107,6 +127,8 @@ class VehiculeController extends AbstractController
     #[Route('/api/vehicules/{id}', name: 'api_vehicules_update', methods: ['PUT'])]
     public function update(Request $request, Vehicule $vehicule, EntityManagerInterface $em, ClientRepository $clientRepo, VehiculeRepository $vehiculeRepo): JsonResponse
     {
+        $this->verifierProprietaire($vehicule);
+
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['immatriculation']) && $data['immatriculation'] !== $vehicule->getImmatriculation()) {
@@ -127,8 +149,10 @@ class VehiculeController extends AbstractController
         // Le client reste obligatoire : on ne l'accepte que s'il est fourni ET valide,
         // jamais en le mettant à null.
         if (!empty($data['client_id'])) {
+            /** @var User $user */
+            $user = $this->getUser();
             $client = $clientRepo->find($data['client_id']);
-            if (!$client || !$client->isActif()) {
+            if (!$client || !$client->isActif() || $client->getUtilisateur() !== $user->getTenant()) {
                 return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
             }
             $vehicule->setClient($client);
@@ -144,6 +168,7 @@ class VehiculeController extends AbstractController
     public function archive(Vehicule $vehicule, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($vehicule);
 
         $vehicule->setActif(false); // jamais de vraie suppression
         $em->flush();

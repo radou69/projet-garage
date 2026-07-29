@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
  
 use App\Entity\Reparation;
+use App\Entity\User;
 use App\Repository\ReparationRepository;
 use App\Repository\VehiculeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,21 +31,42 @@ class ReparationController extends AbstractController
                 'marque' => $reparation->getVehicule()?->getMarque(),
                 'modele' => $reparation->getVehicule()?->getModele(),
                 'immatriculation' => $reparation->getVehicule()?->getImmatriculation(),
+                'client' => [
+                    'id' => $reparation->getVehicule()?->getClient()?->getId(),
+                    'nom' => $reparation->getVehicule()?->getClient()?->getNom(),
+                    'prenom' => $reparation->getVehicule()?->getClient()?->getPrenom(),
+                ],
             ],
         ];
     }
  
+    // Vérifie que la réparation appartient bien au tenant courant (patron ou son employé) —
+    // 404 (pas 403) pour ne pas confirmer l'existence d'une réparation d'un autre garage.
+    private function verifierProprietaire(Reparation $reparation): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($reparation->getVehicule()?->getClient()?->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + filtre par statut + recherche sur le véhicule (marque, modèle, immatriculation)
     #[Route('/api/reparations', name: 'api_reparations_list', methods: ['GET'])]
     public function list(Request $request, ReparationRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $statut = $request->query->get('statut');
         $search = $request->query->get('search');
- 
+
         $qb = $repo->createQueryBuilder('r')
             ->leftJoin('r.vehicule', 'v')
-            ->andWhere('r.actif = true');
- 
+            ->leftJoin('v.client', 'c')
+            ->andWhere('r.actif = true')
+            ->andWhere('c.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
+
         if ($statut) {
             if (!in_array($statut, self::STATUTS_VALIDES, true)) {
                 return $this->json(['message' => 'Statut invalide.'], 400);
@@ -79,11 +101,13 @@ class ReparationController extends AbstractController
             return $this->json(['message' => 'Le véhicule est obligatoire pour une réparation.'], 400);
         }
  
+        /** @var User $user */
+        $user = $this->getUser();
         $vehicule = $vehiculeRepo->find($data['vehicule_id']);
-        if (!$vehicule || !$vehicule->isActif()) {
+        if (!$vehicule || !$vehicule->isActif() || $vehicule->getClient()?->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Véhicule introuvable ou inactif.'], 404);
         }
- 
+
         try {
             $date = new \DateTime($data['date']);
         } catch (\Exception $e) {
@@ -108,6 +132,8 @@ class ReparationController extends AbstractController
     #[Route('/api/reparations/{id}', name: 'api_reparations_show', methods: ['GET'])]
     public function show(Reparation $reparation): JsonResponse
     {
+        $this->verifierProprietaire($reparation);
+
         return $this->json($this->toArray($reparation));
     }
  
@@ -116,6 +142,8 @@ class ReparationController extends AbstractController
     #[Route('/api/reparations/{id}', name: 'api_reparations_update', methods: ['PUT'])]
     public function update(Request $request, Reparation $reparation, EntityManagerInterface $em): JsonResponse
     {
+        $this->verifierProprietaire($reparation);
+
         $data = json_decode($request->getContent(), true);
  
         if (isset($data['date'])) {
@@ -160,7 +188,8 @@ class ReparationController extends AbstractController
     public function cancel(Reparation $reparation, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
- 
+        $this->verifierProprietaire($reparation);
+
         if (in_array($reparation->getStatut(), ['terminee', 'annulee'], true)) {
             return $this->json(['message' => 'Cette réparation est '.$reparation->getStatut().', elle ne peut plus être annulée.'], 400);
         }
@@ -176,7 +205,8 @@ class ReparationController extends AbstractController
     public function archive(Reparation $reparation, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
- 
+        $this->verifierProprietaire($reparation);
+
         $reparation->setActif(false); // jamais de vraie suppression
         $em->flush();
  

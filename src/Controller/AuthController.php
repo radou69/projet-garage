@@ -74,11 +74,15 @@ class AuthController extends AbstractController
             return $this->json(['message' => 'Cet email est déjà utilisé.'], 409);
         }
 
+        /** @var User $patron */
+        $patron = $this->getUser();
+
         $user = new User();
         $user->setNom($nom);
         $user->setEmail($email);
         $user->setRoles(['ROLE_EMPLOYE']); // forcé ici, jamais pris depuis le body envoyé
         $user->setPassword($passwordHasher->hashPassword($user, $motDePasse));
+        $user->setPatron($patron);
 
         $em->persist($user);
         $em->flush();
@@ -91,7 +95,17 @@ class AuthController extends AbstractController
     public function listUtilisateurs(EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
-        $utilisateurs = $em->getRepository(User::class)->findBy(['actif' => true]);
+
+        /** @var User $tenant */
+        $tenant = $this->getUser();
+
+        $utilisateurs = $em->getRepository(User::class)->createQueryBuilder('u')
+            ->andWhere('u.actif = true')
+            ->andWhere('u = :tenant OR u.patron = :tenant')
+            ->setParameter('tenant', $tenant)
+            ->getQuery()
+            ->getResult();
+
         return $this->json(array_map(function (User $u) {
             return [
                 'id' => $u->getId(),
@@ -108,8 +122,12 @@ class AuthController extends AbstractController
     public function desactiverUtilisateur(int $id, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+
+        /** @var User $tenant */
+        $tenant = $this->getUser();
+
         $utilisateur = $em->getRepository(User::class)->find($id);
-        if (!$utilisateur) {
+        if (!$utilisateur || $utilisateur->getPatron() !== $tenant) {
             return $this->json(['message' => 'Utilisateur introuvable.'], 404);
         }
         if (in_array('ROLE_PATRON', $utilisateur->getRoles(), true)) {

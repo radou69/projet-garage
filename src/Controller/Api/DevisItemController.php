@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Devis;
 use App\Entity\DevisItem;
+use App\Entity\User;
 use App\Repository\DevisItemRepository;
 use App\Repository\DevisRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,11 +40,14 @@ class DevisItemController extends AbstractController
         $devis->setMontantTtc(number_format($montantHt * self::TAUX_TVA, 2, '.', ''));
     }
 
-    // Vérifie que le devis existe et n'est pas figé (déjà transformé en facture).
-    // Retourne une JsonResponse d'erreur si un souci est détecté, sinon null.
+    // Vérifie que le devis existe, appartient au tenant courant, et n'est pas figé
+    // (déjà transformé en facture). Retourne une JsonResponse d'erreur si un souci
+    // est détecté, sinon null.
     private function verifierDevisModifiable(?Devis $devis): ?JsonResponse
     {
-        if (!$devis) {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$devis || $devis->getClient()?->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Devis introuvable.'], 404);
         }
 
@@ -58,8 +62,10 @@ class DevisItemController extends AbstractController
     #[Route('/api/devis/{id}/items', name: 'api_devis_items_list', methods: ['GET'])]
     public function list(int $id, DevisRepository $devisRepo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $devis = $devisRepo->find($id);
-        if (!$devis) {
+        if (!$devis || $devis->getClient()?->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Devis introuvable.'], 404);
         }
 

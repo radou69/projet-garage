@@ -4,6 +4,7 @@ namespace App\Controller\Api;
  
 use App\Entity\Reparation;
 use App\Entity\ReparationPiece;
+use App\Entity\User;
 use App\Repository\PieceRepository;
 use App\Repository\ReparationPieceRepository;
 use App\Repository\ReparationRepository;
@@ -45,14 +46,16 @@ class ReparationPieceController extends AbstractController
         $reparation->setCoutTotal(number_format($total, 2, '.', ''));
     }
  
-    // Vérifie que la réparation existe et n'est pas figée (terminee/annulee).
-    // Retourne une JsonResponse d'erreur si un souci est détecté, sinon null.
+    // Vérifie que la réparation existe, appartient au tenant courant, et n'est pas figée
+    // (terminee/annulee). Retourne une JsonResponse d'erreur si un souci est détecté, sinon null.
     private function verifierReparationModifiable(?Reparation $reparation): ?JsonResponse
     {
-        if (!$reparation) {
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$reparation || $reparation->getVehicule()?->getClient()?->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Réparation introuvable.'], 404);
         }
- 
+
         if (in_array($reparation->getStatut(), ['terminee', 'annulee'], true)) {
             return $this->json(['message' => 'Cette réparation est '.$reparation->getStatut().', ses pièces ne peuvent plus être modifiées.'], 400);
         }
@@ -64,11 +67,13 @@ class ReparationPieceController extends AbstractController
     #[Route('/api/reparations/{id}/pieces', name: 'api_reparation_pieces_list', methods: ['GET'])]
     public function list(int $id, ReparationRepository $reparationRepo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $reparation = $reparationRepo->find($id);
-        if (!$reparation) {
+        if (!$reparation || $reparation->getVehicule()?->getClient()?->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Réparation introuvable.'], 404);
         }
- 
+
         return $this->json(array_map([$this, 'toArray'], $reparation->getReparationPieces()->toArray()));
     }
  
