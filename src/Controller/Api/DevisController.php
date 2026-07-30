@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Devis;
 use App\Entity\Facture;
 use App\Entity\FactureItem;
+use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\DevisRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,16 +38,31 @@ class DevisController extends AbstractController
         ];
     }
 
+    // Vérifie que le devis appartient bien au tenant courant (patron ou son employé) —
+    // 404 (pas 403) pour ne pas confirmer l'existence d'un devis d'un autre garage.
+    private function verifierProprietaire(Devis $devis): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($devis->getClient()?->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + filtre par statut + recherche sur le nom du client
     #[Route('/api/devis', name: 'api_devis_list', methods: ['GET'])]
     public function list(Request $request, DevisRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $statut = $request->query->get('statut');
         $search = $request->query->get('search');
 
         $qb = $repo->createQueryBuilder('d')
             ->leftJoin('d.client', 'c')
-            ->andWhere('d.actif = true');
+            ->andWhere('d.actif = true')
+            ->andWhere('c.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
 
         if ($statut) {
             if (!in_array($statut, self::STATUTS_VALIDES, true)) {
@@ -82,8 +98,10 @@ class DevisController extends AbstractController
             return $this->json(['message' => 'Le client est obligatoire pour un devis.'], 400);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
         $client = $clientRepo->find($data['client_id']);
-        if (!$client || !$client->isActif()) {
+        if (!$client || !$client->isActif() || $client->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
         }
 
@@ -111,6 +129,8 @@ class DevisController extends AbstractController
     #[Route('/api/devis/{id}', name: 'api_devis_show', methods: ['GET'])]
     public function show(Devis $devis): JsonResponse
     {
+        $this->verifierProprietaire($devis);
+
         return $this->json($this->toArray($devis));
     }
 
@@ -120,6 +140,8 @@ class DevisController extends AbstractController
     #[Route('/api/devis/{id}', name: 'api_devis_update', methods: ['PUT'])]
     public function update(Request $request, Devis $devis, EntityManagerInterface $em): JsonResponse
     {
+        $this->verifierProprietaire($devis);
+
         if ($devis->getFacture() !== null) {
             return $this->json(['message' => 'Ce devis a déjà été transformé en facture, il ne peut plus être modifié.'], 400);
         }
@@ -151,6 +173,7 @@ class DevisController extends AbstractController
     public function archive(Devis $devis, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($devis);
 
         $devis->setActif(false); // jamais de vraie suppression
         $em->flush();
@@ -185,6 +208,7 @@ class DevisController extends AbstractController
     public function transformerEnFacture(Devis $devis, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($devis);
 
         if ($devis->getFacture() !== null) {
             return $this->json(['message' => 'Ce devis a déjà été transformé en facture.'], 409);

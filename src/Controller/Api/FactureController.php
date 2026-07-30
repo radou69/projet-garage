@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Facture;
 use App\Entity\FactureItem;
+use App\Entity\User;
 use App\Repository\FactureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,16 +48,31 @@ class FactureController extends AbstractController
         ];
     }
 
+    // Vérifie que la facture appartient bien au tenant courant (patron ou son employé) —
+    // 404 (pas 403) pour ne pas confirmer l'existence d'une facture d'un autre garage.
+    private function verifierProprietaire(Facture $facture): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($facture->getClient()?->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + filtre par statut + recherche sur le nom du client
     #[Route('/api/factures', name: 'api_factures_list', methods: ['GET'])]
     public function list(Request $request, FactureRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $statut = $request->query->get('statut');
         $search = $request->query->get('search');
 
         $qb = $repo->createQueryBuilder('f')
             ->leftJoin('f.client', 'c')
-            ->andWhere('f.actif = true');
+            ->andWhere('f.actif = true')
+            ->andWhere('c.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
 
         if ($statut) {
             if (!in_array($statut, self::STATUTS_VALIDES, true)) {
@@ -81,6 +97,8 @@ class FactureController extends AbstractController
     #[Route('/api/factures/{id}', name: 'api_factures_show', methods: ['GET'])]
     public function show(Facture $facture): JsonResponse
     {
+        $this->verifierProprietaire($facture);
+
         return $this->json($this->toArray($facture));
     }
 
@@ -89,6 +107,8 @@ class FactureController extends AbstractController
     #[Route('/api/factures/{id}/items', name: 'api_factures_items_list', methods: ['GET'])]
     public function items(Facture $facture): JsonResponse
     {
+        $this->verifierProprietaire($facture);
+
         return $this->json(array_map([$this, 'itemToArray'], $facture->getFactureItems()->toArray()));
     }
 
@@ -98,6 +118,7 @@ class FactureController extends AbstractController
     public function acompte(Request $request, Facture $facture, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($facture);
 
         if (in_array($facture->getStatut(), ['payee', 'annulee'], true)) {
             return $this->json(['message' => 'Cette facture est '.$facture->getStatut().', aucun acompte ne peut plus être enregistré.'], 400);
@@ -131,6 +152,7 @@ class FactureController extends AbstractController
     public function annuler(Facture $facture, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($facture);
 
         if (in_array($facture->getStatut(), ['payee', 'annulee'], true)) {
             return $this->json(['message' => 'Cette facture est '.$facture->getStatut().', elle ne peut plus être annulée.'], 400);
@@ -147,6 +169,7 @@ class FactureController extends AbstractController
     public function archive(Facture $facture, EntityManagerInterface $em): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($facture);
 
         $facture->setActif(false); // jamais de vraie suppression
         $em->flush();

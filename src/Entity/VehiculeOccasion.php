@@ -35,6 +35,11 @@ class VehiculeOccasion
     #[ORM\ManyToOne(inversedBy: 'vehiculeOccasions')]
     private ?Client $client = null;
 
+    // Patron propriétaire du stock — renseigné à la création, indépendant du client
+    // (un véhicule d'occasion n'a pas de client tant qu'il n'est pas vendu).
+    #[ORM\ManyToOne]
+    private ?User $utilisateur = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,18 @@ class VehiculeOccasion
     public function setClient(?Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?User
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?User $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

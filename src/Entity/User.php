@@ -34,6 +34,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $nomGarage = null;
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $adresseGarage = null;
+    // Patron qui a créé ce compte employé (null pour un compte Patron lui-même).
+    #[ORM\ManyToOne]
+    private ?User $patron = null;
     /**
      * @var Collection<int, Client>
      */
@@ -139,6 +142,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->adresseGarage = $adresseGarage;
         return $this;
+    }
+    public function getPatron(): ?User
+    {
+        return $this->patron;
+    }
+    public function setPatron(?User $patron): static
+    {
+        $this->patron = $patron;
+        return $this;
+    }
+    // Le "tenant" effectif pour l'isolation des données : soi-même si Patron,
+    // sinon le patron qui a créé ce compte employé (jamais null après migration/backfill).
+    public function getTenant(): User
+    {
+        return in_array('ROLE_PATRON', $this->getRoles(), true) ? $this : ($this->patron ?? $this);
     }
     /**
      * @return Collection<int, Client>

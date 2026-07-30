@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\RendezVous;
+use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\RendezVousRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,15 +32,30 @@ class RendezVousController extends AbstractController
         ];
     }
 
+    // Vérifie que le rendez-vous appartient bien au tenant courant (patron ou son employé) —
+    // 404 (pas 403) pour ne pas confirmer l'existence d'un rendez-vous d'un autre garage.
+    private function verifierProprietaire(RendezVous $rdv): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($rdv->getClient()?->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + recherche par statut et/ou nom du client
     #[Route('/api/rendez-vous', name: 'api_rendez_vous_list', methods: ['GET'])]
     public function list(Request $request, RendezVousRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $statut = $request->query->get('statut');
         $search = $request->query->get('search');
 
         $qb = $repo->createQueryBuilder('r')
-            ->leftJoin('r.client', 'c');
+            ->leftJoin('r.client', 'c')
+            ->andWhere('c.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
 
         if ($statut) {
             if (!in_array($statut, self::STATUTS_VALIDES, true)) {
@@ -74,8 +90,10 @@ class RendezVousController extends AbstractController
             return $this->json(['message' => 'Le client est obligatoire pour un rendez-vous.'], 400);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
         $client = $clientRepo->find($data['client_id']);
-        if (!$client || !$client->isActif()) {
+        if (!$client || !$client->isActif() || $client->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
         }
 
@@ -101,6 +119,8 @@ class RendezVousController extends AbstractController
     #[Route('/api/rendez-vous/{id}', name: 'api_rendez_vous_show', methods: ['GET'])]
     public function show(RendezVous $rdv): JsonResponse
     {
+        $this->verifierProprietaire($rdv);
+
         return $this->json($this->toArray($rdv));
     }
 
@@ -108,6 +128,8 @@ class RendezVousController extends AbstractController
     #[Route('/api/rendez-vous/{id}', name: 'api_rendez_vous_update', methods: ['PUT'])]
     public function update(Request $request, RendezVous $rdv, EntityManagerInterface $em): JsonResponse
     {
+        $this->verifierProprietaire($rdv);
+
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['dateHeure'])) {
@@ -151,6 +173,8 @@ class RendezVousController extends AbstractController
     #[Route('/api/rendez-vous/{id}/cancel', name: 'api_rendez_vous_cancel', methods: ['PATCH'])]
     public function cancel(RendezVous $rdv, EntityManagerInterface $em): JsonResponse
     {
+        $this->verifierProprietaire($rdv);
+
         if (in_array($rdv->getStatut(), ['termine', 'annule'], true)) {
             return $this->json(['message' => 'Ce rendez-vous est '.$rdv->getStatut().', il ne peut plus être annulé.'], 400);
         }

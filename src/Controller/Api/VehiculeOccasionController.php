@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\User;
 use App\Entity\VehiculeOccasion;
 use App\Repository\ClientRepository;
 use App\Repository\VehiculeOccasionRepository;
@@ -34,14 +35,29 @@ class VehiculeOccasionController extends AbstractController
         ];
     }
 
+    // Vérifie que le véhicule d'occasion appartient bien au tenant courant (patron ou son
+    // employé) — 404 (pas 403) pour ne pas confirmer l'existence d'un stock d'un autre garage.
+    private function verifierProprietaire(VehiculeOccasion $vo): void
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($vo->getUtilisateur() !== $user->getTenant()) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     // Liste + filtre par statut + recherche sur marque/modèle
     #[Route('/api/vehicule-occasions', name: 'api_vehicule_occasions_list', methods: ['GET'])]
     public function list(Request $request, VehiculeOccasionRepository $repo): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $statut = $request->query->get('statut');
         $search = $request->query->get('search');
 
-        $qb = $repo->createQueryBuilder('vo');
+        $qb = $repo->createQueryBuilder('vo')
+            ->andWhere('vo.utilisateur = :tenant')
+            ->setParameter('tenant', $user->getTenant());
 
         if ($statut) {
             if (!in_array($statut, self::STATUTS_VALIDES, true)) {
@@ -76,6 +92,9 @@ class VehiculeOccasionController extends AbstractController
             return $this->json(['message' => 'Le prix doit être un nombre positif.'], 400);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $vo = new VehiculeOccasion();
         $vo->setMarque($data['marque']);
         $vo->setModele($data['modele']);
@@ -83,6 +102,7 @@ class VehiculeOccasionController extends AbstractController
         $vo->setKilometrage($data['kilometrage'] ?? null);
         $vo->setPrix(number_format((float) $data['prix'], 2, '.', ''));
         $vo->setStatut('disponible');
+        $vo->setUtilisateur($user->getTenant());
         // client volontairement laissé à null : fixé uniquement via l'action vendre()
 
         $em->persist($vo);
@@ -95,6 +115,8 @@ class VehiculeOccasionController extends AbstractController
     #[Route('/api/vehicule-occasions/{id}', name: 'api_vehicule_occasions_show', methods: ['GET'])]
     public function show(VehiculeOccasion $vo): JsonResponse
     {
+        $this->verifierProprietaire($vo);
+
         return $this->json($this->toArray($vo));
     }
 
@@ -103,6 +125,8 @@ class VehiculeOccasionController extends AbstractController
     #[Route('/api/vehicule-occasions/{id}', name: 'api_vehicule_occasions_update', methods: ['PUT'])]
     public function update(Request $request, VehiculeOccasion $vo, EntityManagerInterface $em): JsonResponse
     {
+        $this->verifierProprietaire($vo);
+
         if ($vo->getStatut() === 'vendu') {
             return $this->json(['message' => 'Ce véhicule est vendu, il ne peut plus être modifié.'], 400);
         }
@@ -143,6 +167,7 @@ class VehiculeOccasionController extends AbstractController
     public function vendre(Request $request, VehiculeOccasion $vo, EntityManagerInterface $em, ClientRepository $clientRepo): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_PATRON');
+        $this->verifierProprietaire($vo);
 
         if ($vo->getStatut() === 'vendu') {
             return $this->json(['message' => 'Ce véhicule est déjà vendu.'], 400);
@@ -154,8 +179,10 @@ class VehiculeOccasionController extends AbstractController
             return $this->json(['message' => 'Le client acheteur est obligatoire.'], 400);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
         $client = $clientRepo->find($data['client_id']);
-        if (!$client || !$client->isActif()) {
+        if (!$client || !$client->isActif() || $client->getUtilisateur() !== $user->getTenant()) {
             return $this->json(['message' => 'Client introuvable ou inactif.'], 404);
         }
 
