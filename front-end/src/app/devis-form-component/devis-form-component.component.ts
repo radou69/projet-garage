@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DevisService } from '../services/devis.service';
 import { ClientService, Client } from '../services/client.service';
+import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-devis-form-component',
@@ -20,8 +22,19 @@ export class DevisFormComponentComponent implements OnInit {
   constructor(
     private devisService: DevisService,
     private clientService: ClientService,
+    private authService: AuthService,
+    private menuState: MenuStateService,
     private router: Router
   ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
 
   ngOnInit(): void {
     this.clientService.getAll().subscribe({
