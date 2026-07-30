@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReparationService, Reparation, ReparationPieceLigne } from '../services/reparation.service';
 import { PieceService, Piece } from '../services/piece.service';
 import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-reparation-detail-component',
@@ -29,8 +30,19 @@ export class ReparationDetailComponentComponent implements OnInit {
     private reparationService: ReparationService,
     private pieceService: PieceService,
     public authService: AuthService,
-    private route: ActivatedRoute
+    private menuState: MenuStateService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
 
   ngOnInit(): void {
     this.reparationId = Number(this.route.snapshot.paramMap.get('id'));
@@ -74,6 +86,16 @@ export class ReparationDetailComponentComponent implements OnInit {
         this.errorMessage = err.error?.message || 'Impossible de changer le statut.';
       }
     });
+  }
+
+  statutLabel(statut?: string): string {
+    switch (statut) {
+      case 'en_attente': return 'En attente';
+      case 'en_cours': return 'En cours';
+      case 'terminee': return 'Terminée';
+      case 'annulee': return 'Annulée';
+      default: return statut ?? '';
+    }
   }
 
   peutAnnuler(): boolean {

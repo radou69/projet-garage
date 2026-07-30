@@ -1,90 +1,139 @@
-<div class="reparation-detail-container">
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-  @if (successMessage) {
-    <p class="success-message">{{ successMessage }}</p>
-  }
-
-  @if (reparation) {
-    <div class="reparation-header">
-      <h1>Réparation — {{ reparation.vehicule.marque }} {{ reparation.vehicule.modele }} ({{ reparation.vehicule.immatriculation }})</h1>
-      <p class="reparation-date">Date : {{ reparation.date }} — {{ reparation.description }}</p>
-
-      @if (reparation.statut === 'terminee' || reparation.statut === 'annulee') {
-        <p class="figee-notice">Cette réparation est {{ reparation.statut }} — plus aucune modification possible.</p>
-      } @else {
-        <div class="form-group statut-group">
-          <label for="statut">Statut</label>
-          <select id="statut" [(ngModel)]="reparation.statut" (ngModelChange)="changerStatut($event)">
-            @for (s of statutsPossibles; track s) {
-              <option [value]="s">{{ s }}</option>
-            }
-          </select>
-        </div>
-        @if (peutAnnuler()) {
-          <button (click)="annulerReparation()" class="cancel-btn">Annuler</button>
-        }
-      }
-
-      <div class="totaux">
-        <p>Coût total : <strong>{{ reparation.coutTotal }} €</strong></p>
+<div class="reparation-detail-page">
+  <header class="form-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
       </div>
     </div>
+  </header>
 
-    <h2>Pièces utilisées</h2>
-
-    @if (lignes.length === 0) {
-      <p>Aucune pièce ajoutée pour le moment.</p>
+  <div class="detail-container">
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
     }
 
-    @if (lignes.length > 0) {
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Pièce</th>
-              <th>Prix unitaire</th>
-              <th>Quantité</th>
-              <th>Sous-total</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (ligne of lignes; track ligne.id) {
-              <tr>
-                <td>{{ ligne.piece?.nom }}</td>
-                <td>{{ ligne.piece?.prixUnitaire }} €</td>
-                <td>{{ ligne.quantite }}</td>
-                <td>{{ ligne.sousTotal }} €</td>
-                <td>
-                  @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
-                    <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Retirer</button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+    @if (reparation) {
+      <p class="section-kicker">Réparations</p>
+
+      <div class="detail-card">
+        <div class="titre-row">
+          <h1>{{ reparation.description || 'Réparation' }}</h1>
+          <span class="statut-badge" [class]="'statut-' + reparation.statut">{{ statutLabel(reparation.statut) }}</span>
+        </div>
+        <p class="reparation-date">{{ reparation.date }}</p>
+
+        <h3 class="section-title">Client & véhicule</h3>
+        <div class="info-row">
+          <span class="info-label">Client</span>
+          <span class="info-value">{{ reparation.vehicule.client.prenom }} {{ reparation.vehicule.client.nom }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Véhicule</span>
+          <span class="info-value">{{ reparation.vehicule.marque }} {{ reparation.vehicule.modele }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Immatriculation</span>
+          <span class="info-value">{{ reparation.vehicule.immatriculation }}</span>
+        </div>
+
+        <h3 class="section-title">Description des travaux</h3>
+        <div class="description-box">{{ reparation.description || 'Aucune description.' }}</div>
+
+        <h3 class="section-title">Pièces utilisées</h3>
+
+        @if (lignes.length === 0) {
+          <p class="empty-message">Aucune pièce ajoutée pour le moment.</p>
+        }
+
+        @if (lignes.length > 0) {
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pièce</th>
+                  <th>Qté</th>
+                  <th>Prix u.</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (ligne of lignes; track ligne.id) {
+                  <tr>
+                    <td>{{ ligne.piece?.nom }}</td>
+                    <td>{{ ligne.quantite }}</td>
+                    <td>{{ ligne.piece?.prixUnitaire }} €</td>
+                    <td>{{ ligne.sousTotal }} €</td>
+                    <td>
+                      @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
+                        <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Retirer</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-label">Total pièces</td>
+                  <td class="total-value">{{ reparation.coutTotal }} €</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        }
+
+        @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
+          <form (ngSubmit)="ajouterPiece()" class="piece-form">
+            <div class="piece-inputs">
+              <select name="piece" [(ngModel)]="pieceIdSelectionnee">
+                <option [ngValue]="undefined" disabled>Sélectionner une pièce</option>
+                @for (p of catalogue; track p.id) {
+                  <option [ngValue]="p.id">{{ p.nom }} ({{ p.prixUnitaire }} €)</option>
+                }
+              </select>
+              <input type="number" name="quantite" [(ngModel)]="quantiteSaisie" min="1" placeholder="Qté">
+            </div>
+            <button type="submit" class="new-btn">
+              <span>Ajouter une pièce</span>
+              <span class="new-btn-icon">+</span>
+            </button>
+          </form>
+
+          <div class="form-group statut-group">
+            <label for="statut">Statut</label>
+            <select id="statut" [(ngModel)]="reparation.statut" (ngModelChange)="changerStatut($event)">
+              @for (s of statutsPossibles; track s) {
+                <option [value]="s">{{ statutLabel(s) }}</option>
+              }
+            </select>
+          </div>
+
+          @if (peutAnnuler()) {
+            <button (click)="annulerReparation()" class="cancel-btn">Annuler</button>
+          }
+        } @else {
+          <p class="figee-notice">Cette réparation est {{ statutLabel(reparation.statut) }} — plus aucune modification possible.</p>
+        }
       </div>
     }
 
-    @if (reparation.statut !== 'terminee' && reparation.statut !== 'annulee') {
-      <form (ngSubmit)="ajouterPiece()" class="piece-form">
-        <h3>Ajouter une pièce</h3>
-        <div class="piece-inputs">
-          <select name="piece" [(ngModel)]="pieceIdSelectionnee">
-            <option [ngValue]="undefined" disabled>Sélectionner une pièce</option>
-            @for (p of catalogue; track p.id) {
-              <option [ngValue]="p.id">{{ p.nom }} ({{ p.prixUnitaire }} €)</option>
-            }
-          </select>
-          <input type="number" name="quantite" [(ngModel)]="quantiteSaisie" min="1" placeholder="Qté">
-          <button type="submit">Ajouter</button>
-        </div>
-      </form>
-    }
-  }
-
-  <a routerLink="/reparations" class="back-link">← Retour aux réparations</a>
+    <a routerLink="/reparations" class="back-link">← Retour aux réparations</a>
+  </div>
 </div>

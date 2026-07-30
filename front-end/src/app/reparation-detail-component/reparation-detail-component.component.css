@@ -1,124 +1,214 @@
-.reparation-detail-container {
+.reparation-detail-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.form-header {
+  background-color: #000000;
+}
+.header-content {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+}
+.header-content h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.brand-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+.detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  box-sizing: border-box;
+}
+
+.section-kicker {
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+  font-weight: 800;
+  font-size: 1.1rem;
 }
 
 .error-message {
   color: #e74c3c;
+  font-size: 0.9rem;
   margin-bottom: 1rem;
 }
-
 .success-message {
   color: #27ae60;
+  font-size: 0.9rem;
   margin-bottom: 1rem;
 }
-
-.reparation-header {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  margin-bottom: 1.5rem;
+.empty-message {
+  color: #7f8c8d;
+  font-size: 0.9rem;
 }
 
-.reparation-header h1 {
-  color: #2c3e50;
-  margin: 0 0 0.3rem 0;
-  font-size: 1.3rem;
+.titre-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
-
+.titre-row h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
 .reparation-date {
   color: #7f8c8d;
-  margin: 0 0 1rem 0;
+  margin: 0.2rem 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eeeeee;
+}
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7f8c8d;
+}
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.description-box {
+  background-color: #f4f5f7;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  color: #333333;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-line;
 }
 
 .figee-notice {
   background-color: #fff8e1;
   border: 1px solid #ffe082;
   padding: 0.75rem 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
   color: #8a6d00;
   font-size: 0.9rem;
+  margin-top: 1rem;
 }
 
 .statut-group {
-  max-width: 220px;
-  margin-bottom: 0.5rem;
+  max-width: 260px;
+  margin-top: 1rem;
 }
-
 .statut-group label {
   display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #2c3e50;
-  font-size: 0.9rem;
 }
-
 .statut-group select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.7rem 0.8rem;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: white;
 }
 
-.cancel-btn {
-  background: none;
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
-  padding: 0.25rem 0.6rem;
+.statut-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-top: 0.2rem;
 }
-.cancel-btn:hover {
-  background-color: #e74c3c;
-  color: #ffffff;
-}
-
-.totaux {
-  margin: 1rem 0 0 0;
-}
-
-.totaux p {
-  margin: 0;
-  color: #2c3e50;
-}
-
-h2 {
-  color: #2c3e50;
-  font-size: 1.2rem;
-  margin: 1.5rem 0 1rem 0;
-}
+.statut-en_attente { background-color: #eceff1; color: #555555; }
+.statut-en_cours { background-color: #e4e8fa; color: #3357A8; }
+.statut-terminee { background-color: #d7f2e0; color: #1e7d43; }
+.statut-annulee { background-color: #fbe2e1; color: #c0392b; }
 
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  background: white;
 }
 
 table {
   width: 100%;
-  min-width: 500px;
+  min-width: 420px;
   border-collapse: collapse;
-  background: white;
 }
 
 th, td {
   text-align: left;
-  padding: 0.7rem 1rem;
-  border-bottom: 1px solid #eee;
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #eeeeee;
   white-space: nowrap;
 }
 
 th {
-  background-color: #f4f5f7;
-  color: #2c3e50;
-  font-weight: 600;
+  color: #7f8c8d;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+tfoot td {
+  border-bottom: none;
+  font-weight: 800;
+  color: #1a1a1a;
+  padding-top: 1rem;
+}
+.total-label {
+  text-align: right;
 }
 
 .archive-btn {
@@ -126,42 +216,35 @@ th {
   border: 1px solid #e74c3c;
   color: #e74c3c;
   padding: 0.3rem 0.7rem;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
-
 .archive-btn:hover {
   background-color: #e74c3c;
   color: white;
 }
 
 .piece-form {
-  background: white;
-  padding: 1.2rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  margin-top: 1rem;
-}
-
-.piece-form h3 {
-  margin: 0 0 0.8rem 0;
-  color: #2c3e50;
-  font-size: 1rem;
+  margin-top: 1.5rem;
 }
 
 .piece-inputs {
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
+  margin-bottom: 0.75rem;
 }
 
 .piece-inputs select,
 .piece-inputs input {
-  padding: 0.5rem;
+  padding: 0.7rem 0.8rem;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
 .piece-inputs select {
@@ -174,34 +257,74 @@ th {
   min-width: 80px;
 }
 
-.piece-inputs button {
-  background-color: #3d5afe;
-  color: white;
+.new-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background-color: #1a1a1a;
+  color: #ffffff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  box-sizing: border-box;
   cursor: pointer;
+  font-family: inherit;
+}
+.new-btn:hover {
+  background-color: #333333;
+}
+.new-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.piece-inputs button:hover {
-  background-color: #303f9f;
+.cancel-btn {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  box-sizing: border-box;
+}
+.cancel-btn:hover {
+  background-color: #e74c3c;
+  color: #ffffff;
 }
 
 .back-link {
-  display: inline-block;
-  margin-top: 1.5rem;
+  display: block;
+  text-align: center;
+  margin-top: 2rem;
   color: #7f8c8d;
   text-decoration: none;
   font-size: 0.9rem;
 }
-
 .back-link:hover {
-  color: #3d5afe;
+  color: #1a1a1a;
 }
 
 @media (max-width: 600px) {
-  .reparation-detail-container {
-    padding: 0 1rem;
+  .detail-container {
+    padding: 1.25rem 1rem 2rem;
   }
 
   .piece-inputs {
@@ -209,8 +332,7 @@ th {
   }
 
   .piece-inputs select,
-  .piece-inputs input,
-  .piece-inputs button {
+  .piece-inputs input {
     width: 100%;
   }
 }
