@@ -1,15 +1,40 @@
-<div class="devis-detail-container">
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-  @if (successMessage) {
-    <p class="success-message">{{ successMessage }}</p>
-  }
+<div class="devis-detail-page">
+  <header class="form-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
 
-  @if (devis) {
-    <div class="devis-header">
-      <h1>Devis — {{ devis.client.prenom }} {{ devis.client.nom }}</h1>
-      <p class="devis-date">Date : {{ devis.date }}</p>
+  <div class="detail-container">
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
+
+    @if (devis) {
+      <p class="section-kicker">Devis</p>
+
+      <div class="titre-row">
+        <h1>{{ reference(devis) }}</h1>
+      </div>
+      <p class="devis-client">{{ devis.client.prenom }} {{ devis.client.nom }} · {{ devis.date }}</p>
 
       @if (devis.factureId) {
         <p class="figee-notice">Ce devis a été transformé en facture (n° {{ devis.factureId }}) — il est figé, plus aucune modification possible.</p>
@@ -24,65 +49,79 @@
         </div>
       }
 
-      <div class="totaux">
-        <p>Montant HT : <strong>{{ devis.montantHt }} €</strong></p>
-        <p>Montant TTC (TVA 20%) : <strong>{{ devis.montantTtc }} €</strong></p>
-      </div>
+      <h3 class="section-title">Prestations & pièces</h3>
+
+      @if (items.length === 0) {
+        <p class="empty-message">Aucune ligne pour le moment.</p>
+      }
+
+      @if (items.length > 0) {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Désignation</th>
+                <th>Qté</th>
+                <th>PU HT</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ligne of items; track ligne.id) {
+                <tr>
+                  <td>{{ ligne.designation }}</td>
+                  <td>{{ ligne.quantite }}</td>
+                  <td>{{ ligne.prixUnitaire }} €</td>
+                  <td>{{ ligne.montant }} €</td>
+                  <td>
+                    @if (!devis.factureId) {
+                      <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Supprimer</button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="total-label">Total HT</td>
+                <td class="total-value">{{ devis.montantHt }} €</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="3" class="total-label">TVA (20%)</td>
+                <td class="total-value">{{ tva(devis) }} €</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="3" class="total-label total-ttc">Total TTC</td>
+                <td class="total-value total-ttc">{{ devis.montantTtc }} €</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      }
+
+      @if (!devis.factureId) {
+        <form (ngSubmit)="ajouterLigne()" class="ligne-form">
+          <div class="ligne-inputs">
+            <input type="text" name="designation" [(ngModel)]="nouvelleLigne.designation" placeholder="Désignation" required>
+            <input type="number" name="quantite" [(ngModel)]="nouvelleLigne.quantite" placeholder="Qté" min="1" required>
+            <input type="number" name="prixUnitaire" [(ngModel)]="nouvelleLigne.prixUnitaire" placeholder="Prix unitaire" min="0.01" step="0.01" required>
+          </div>
+          <button type="submit" class="new-btn">
+            <span>Ajouter une ligne</span>
+            <span class="new-btn-icon">+</span>
+          </button>
+        </form>
+      }
 
       @if (devis.statut === 'accepte' && !devis.factureId) {
         <button (click)="transformerEnFacture()" class="transform-btn">Transformer en facture</button>
       }
-    </div>
-
-    <h2>Lignes du devis</h2>
-
-    @if (items.length === 0) {
-      <p>Aucune ligne pour le moment.</p>
     }
 
-    @if (items.length > 0) {
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Désignation</th>
-              <th>Quantité</th>
-              <th>Prix unitaire</th>
-              <th>Montant</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (ligne of items; track ligne.id) {
-              <tr>
-                <td>{{ ligne.designation }}</td>
-                <td>{{ ligne.quantite }}</td>
-                <td>{{ ligne.prixUnitaire }} €</td>
-                <td>{{ ligne.montant }} €</td>
-                <td>
-                  @if (!devis.factureId) {
-                    <button (click)="supprimerLigne(ligne.id!)" class="archive-btn">Supprimer</button>
-                  }
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-
-    @if (!devis.factureId) {
-      <form (ngSubmit)="ajouterLigne()" class="ligne-form">
-        <h3>Ajouter une ligne</h3>
-        <div class="ligne-inputs">
-          <input type="text" name="designation" [(ngModel)]="nouvelleLigne.designation" placeholder="Désignation" required>
-          <input type="number" name="quantite" [(ngModel)]="nouvelleLigne.quantite" placeholder="Qté" min="1" required>
-          <input type="number" name="prixUnitaire" [(ngModel)]="nouvelleLigne.prixUnitaire" placeholder="Prix unitaire" min="0.01" step="0.01" required>
-          <button type="submit">Ajouter</button>
-        </div>
-      </form>
-    }
-  }
-
-  <a routerLink="/devis" class="back-link">← Retour aux devis</a>
+    <a routerLink="/devis" class="back-link">← Retour aux devis</a>
+  </div>
 </div>

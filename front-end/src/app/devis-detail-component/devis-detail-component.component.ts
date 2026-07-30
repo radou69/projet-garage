@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DevisService, Devis, DevisItem } from '../services/devis.service';
+import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-devis-detail-component',
@@ -28,9 +30,34 @@ export class DevisDetailComponentComponent implements OnInit {
 
   constructor(
     private devisService: DevisService,
+    private authService: AuthService,
+    private menuState: MenuStateService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
+
+  reference(devis: Devis): string {
+    const annee = devis.date?.slice(0, 4) ?? '----';
+    const numero = String(devis.id ?? 0).padStart(3, '0');
+    return `DEV-${annee}-${numero}`;
+  }
+
+  // Dérivée d'affichage à partir des deux montants déjà calculés côté API (US6.3) —
+  // ne redérive pas le taux de 20%, juste la différence des deux valeurs serveur.
+  tva(devis: Devis): string {
+    const ht = parseFloat(devis.montantHt ?? '0');
+    const ttc = parseFloat(devis.montantTtc ?? '0');
+    return (ttc - ht).toFixed(2);
+  }
 
   ngOnInit(): void {
     this.devisId = Number(this.route.snapshot.paramMap.get('id'));
