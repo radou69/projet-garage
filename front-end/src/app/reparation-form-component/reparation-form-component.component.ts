@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ReparationService } from '../services/reparation.service';
 import { VehiculeService, Vehicule } from '../services/vehicule.service';
+import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-reparation-form-component',
@@ -21,8 +23,19 @@ export class ReparationFormComponentComponent implements OnInit {
   constructor(
     private reparationService: ReparationService,
     private vehiculeService: VehiculeService,
+    private authService: AuthService,
+    private menuState: MenuStateService,
     private router: Router
   ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
 
   ngOnInit(): void {
     this.vehiculeService.getAll().subscribe({
