@@ -1,51 +1,64 @@
-<div class="devis-list-container">
-  <div class="header-row">
-    <h1>Devis</h1>
-    <a routerLink="/devis/nouveau" class="new-btn">+ Nouveau devis</a>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (devisListe.length === 0 && !errorMessage) {
-    <p>Aucun devis pour le moment.</p>
-  }
-
-  @if (devisListe.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Client</th>
-            <th>Montant HT</th>
-            <th>Montant TTC</th>
-            <th>Statut</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (devis of devisListe; track devis.id) {
-            <tr>
-              <td>{{ devis.date }}</td>
-              <td>{{ devis.client.prenom }} {{ devis.client.nom }}</td>
-              <td>{{ devis.montantHt }} €</td>
-              <td>{{ devis.montantTtc }} €</td>
-              <td>{{ devis.statut }}</td>
-              <td><a [routerLink]="['/devis', devis.id]" class="edit-link">Gérer les lignes</a></td>
-              <td>
-                @if (!devis.factureId) {
-                  <button (click)="archiveDevis(devis.id!)" class="archive-btn">Archiver</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="devis-page">
+  <header class="devis-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="devis-body">
+    <h2>Devis</h2>
+    <p class="subtitle">{{ devisListe.length }} devis ce mois-ci</p>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (devisListe.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucun devis pour le moment.</p>
+    }
+
+    @if (devisListe.length > 0) {
+      <ul class="devis-list">
+        @for (devis of devisListe; track devis.id) {
+          <li class="devis-row">
+            <div class="devis-top">
+              <div class="devis-identity">
+                <p class="devis-ref">{{ reference(devis) }}</p>
+                <p class="devis-detail">{{ devis.client.prenom }} {{ devis.client.nom }} · {{ devis.montantTtc }} €</p>
+              </div>
+              <span class="statut-badge" [class]="'statut-' + devis.statut">{{ statutLabel(devis.statut) }}</span>
+            </div>
+            <div class="devis-actions">
+              <a [routerLink]="['/devis', devis.id]" class="edit-link">Gérer les lignes</a>
+              @if (!devis.factureId) {
+                <button (click)="archiveDevis(devis.id!)" class="archive-btn">Archiver</button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <a routerLink="/devis/nouveau" class="new-btn">
+      <span>Nouveau Devis</span>
+      <span class="new-btn-icon">+</span>
+    </a>
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>
