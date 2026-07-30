@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ReparationService, Reparation, ReparationPieceLigne } from '../services/reparation.service';
 import { PieceService, Piece } from '../services/piece.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-reparation-detail-component',
@@ -27,6 +28,7 @@ export class ReparationDetailComponentComponent implements OnInit {
   constructor(
     private reparationService: ReparationService,
     private pieceService: PieceService,
+    public authService: AuthService,
     private route: ActivatedRoute
   ) {}
 
@@ -70,6 +72,28 @@ export class ReparationDetailComponentComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Impossible de changer le statut.';
+      }
+    });
+  }
+
+  peutAnnuler(): boolean {
+    return !!this.reparation
+      && this.reparation.statut !== 'terminee'
+      && this.reparation.statut !== 'annulee'
+      && this.authService.isPatron();
+  }
+
+  annulerReparation(): void {
+    const confirmed = confirm('Annuler cette réparation ?');
+    if (!confirmed) {
+      return;
+    }
+    this.reparationService.cancel(this.reparationId).subscribe({
+      next: () => {
+        this.loadReparation();
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || "Impossible d'annuler cette réparation.";
       }
     });
   }

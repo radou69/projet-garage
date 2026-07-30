@@ -1,51 +1,65 @@
-<div class="reparation-list-container">
-  <div class="header-row">
-    <h1>Réparations</h1>
-    <a routerLink="/reparations/nouveau" class="new-btn">+ Nouvelle réparation</a>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (reparations.length === 0 && !errorMessage) {
-    <p>Aucune réparation pour le moment.</p>
-  }
-
-  @if (reparations.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Véhicule</th>
-            <th>Description</th>
-            <th>Coût total</th>
-            <th>Statut</th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (r of reparations; track r.id) {
-            <tr>
-              <td>{{ r.date }}</td>
-              <td>{{ r.vehicule.marque }} {{ r.vehicule.modele }} ({{ r.vehicule.immatriculation }})</td>
-              <td>{{ r.description }}</td>
-              <td>{{ r.coutTotal }} €</td>
-              <td>{{ r.statut }}</td>
-              <td><a [routerLink]="['/reparations', r.id]" class="edit-link">Gérer les pièces</a></td>
-              <td>
-                @if (peutAnnuler(r)) {
-                  <button (click)="annulerReparation(r.id!)" class="archive-btn">Annuler</button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="reparations-page">
+  <header class="reparations-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="reparations-body">
+    <h2>Réparations</h2>
+    <p class="subtitle">{{ subtitleText }}</p>
+
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filtre === 'en_cours'" (click)="setFiltre('en_cours')">En cours</button>
+      <button class="filter-tab" [class.active]="filtre === 'terminee'" (click)="setFiltre('terminee')">Terminées</button>
+      <button class="filter-tab" [class.active]="filtre === 'toutes'" (click)="setFiltre('toutes')">Toutes</button>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (reparationsFiltrees.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucune réparation.</p>
+    }
+
+    @if (reparationsFiltrees.length > 0) {
+      <ul class="reparation-list">
+        @for (r of reparationsFiltrees; track r.id) {
+          <li>
+            <a class="reparation-row" [routerLink]="['/reparations', r.id]">
+              <div class="reparation-thumb"></div>
+              <div class="reparation-identity">
+                <p class="reparation-titre">{{ r.description || 'Réparation' }}</p>
+                <p class="reparation-detail">{{ r.vehicule.client.prenom }} {{ r.vehicule.client.nom }} · {{ r.vehicule.marque }} {{ r.vehicule.modele }}</p>
+              </div>
+              <span class="statut-badge" [class]="'statut-' + r.statut">{{ statutLabel(r.statut) }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+
+    <a routerLink="/reparations/nouveau" class="new-btn">
+      <span>Nouvelle Réparation</span>
+      <span class="new-btn-icon">+</span>
+    </a>
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>

@@ -22,7 +22,9 @@
             }
           </select>
         </div>
-        <p class="hint">Pour annuler cette réparation, utilise le bouton "Annuler" depuis la liste des réparations.</p>
+        @if (peutAnnuler()) {
+          <button (click)="annulerReparation()" class="cancel-btn">Annuler</button>
+        }
       }
 
       <div class="totaux">

@@ -62,10 +62,20 @@
   border-radius: 4px;
 }
 
-.hint {
-  color: #7f8c8d;
-  font-size: 0.85rem;
-  margin: 0 0 1rem 0;
+.cancel-btn {
+  background: none;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.cancel-btn:hover {
+  background-color: #e74c3c;
+  color: #ffffff;
 }
 
 .totaux {

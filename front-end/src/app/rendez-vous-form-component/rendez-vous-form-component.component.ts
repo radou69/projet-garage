@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { RendezVousService, RendezVousCreatePayload } from '../services/rendez-vous.service';
 import { ClientService, Client } from '../services/client.service';
+import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-rendez-vous-form-component',
@@ -12,9 +14,10 @@ import { ClientService, Client } from '../services/client.service';
   styleUrl: './rendez-vous-form-component.component.css'
 })
 export class RendezVousFormComponentComponent implements OnInit {
-  // dateHeureLocal est au format attendu par l'input HTML datetime-local : "AAAA-MM-JJTHH:mm"
-  // (mais affiché par le navigateur au format français JJ/MM/AAAA HH:mm)
-  dateHeureLocal = '';
+  // dateOnly ("AAAA-MM-JJ") et heureOnly ("HH:mm") sont les formats attendus par les inputs
+  // HTML date/time ; ils sont recombinés en "AAAA-MM-JJ HH:mm:ss" pour l'API dans onSubmit().
+  dateOnly = '';
+  heureOnly = '';
   description = '';
   clientId: number | undefined = undefined;
 
@@ -27,9 +30,20 @@ export class RendezVousFormComponentComponent implements OnInit {
   constructor(
     private rdvService: RendezVousService,
     private clientService: ClientService,
+    private authService: AuthService,
+    private menuState: MenuStateService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
+  }
 
   ngOnInit(): void {
     this.clientService.getAll().subscribe({
@@ -47,8 +61,10 @@ export class RendezVousFormComponentComponent implements OnInit {
       this.rdvId = Number(idParam);
       this.rdvService.getOne(this.rdvId).subscribe({
         next: (data) => {
-          // API renvoie "AAAA-MM-JJ HH:mm:ss" -> on convertit pour l'input datetime-local
-          this.dateHeureLocal = data.dateHeure.replace(' ', 'T').slice(0, 16);
+          // API renvoie "AAAA-MM-JJ HH:mm:ss" -> on sépare pour les inputs date et heure
+          const [datePart, timePart] = data.dateHeure.replace(' ', 'T').slice(0, 16).split('T');
+          this.dateOnly = datePart;
+          this.heureOnly = timePart;
           this.description = data.description ?? '';
           this.clientId = data.client.id;
         },
@@ -63,8 +79,8 @@ export class RendezVousFormComponentComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Input datetime-local -> "AAAA-MM-JJTHH:mm" ; API attend "AAAA-MM-JJ HH:mm:ss"
-    const dateHeureApi = this.dateHeureLocal.replace('T', ' ') + ':00';
+    // Inputs date + heure ("AAAA-MM-JJ" + "HH:mm") -> API attend "AAAA-MM-JJ HH:mm:ss"
+    const dateHeureApi = `${this.dateOnly} ${this.heureOnly}:00`;
 
     const payload: RendezVousCreatePayload = {
       dateHeure: dateHeureApi,

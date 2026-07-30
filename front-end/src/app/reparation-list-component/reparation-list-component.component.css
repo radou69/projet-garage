@@ -1,126 +1,194 @@
-.reparation-list-container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
+.reparations-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.reparation-list-container h1 {
-  color: #2c3e50;
+.reparations-header {
+  background-color: #000000;
+}
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+}
+.header-content h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.brand-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+.reparations-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  box-sizing: border-box;
+}
+
+.reparations-body h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+.subtitle {
+  margin: 0 0 1.25rem 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.filter-tab {
+  background-color: #eceff1;
+  color: #555555;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.filter-tab.active {
+  background-color: #1a1a1a;
+  color: #ffffff;
 }
 
 .error-message {
   color: #e74c3c;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+.empty-message {
+  color: #7f8c8d;
+  font-size: 0.9rem;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  background: white;
+.reparation-list {
+  list-style: none;
+  margin: 0 0 2rem 0;
+  padding: 0;
+}
+.reparation-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #eeeeee;
+  text-decoration: none;
+  color: inherit;
+}
+.reparation-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background-color: #e5e7eb;
+  flex-shrink: 0;
+}
+.reparation-identity {
+  flex: 1;
+  min-width: 0;
+}
+.reparation-titre {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+.reparation-detail {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  color: #7f8c8d;
 }
 
-table {
-  width: 100%;
-  min-width: 700px;
-  border-collapse: collapse;
-  background: white;
-}
-
-th, td {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
+.statut-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  flex-shrink: 0;
   white-space: nowrap;
 }
-
-th {
-  background-color: #f4f5f7;
-  color: #2c3e50;
-  font-weight: 600;
-}
-
-tr:hover {
-  background-color: #fafafa;
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.header-row h1 {
-  margin: 0;
-}
+.statut-en_attente { background-color: #eceff1; color: #555555; }
+.statut-en_cours { background-color: #e4e8fa; color: #3357A8; }
+.statut-terminee { background-color: #d7f2e0; color: #1e7d43; }
+.statut-annulee { background-color: #fbe2e1; color: #c0392b; }
 
 .new-btn {
-  background-color: #3d5afe;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border-radius: 999px;
   text-decoration: none;
-  font-size: 0.9rem;
-  white-space: nowrap;
+  font-weight: 700;
+  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 1.5rem;
 }
-
 .new-btn:hover {
-  background-color: #303f9f;
+  background-color: #333333;
 }
-
-.edit-link {
-  color: #3d5afe;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.edit-link:hover {
-  text-decoration: underline;
-}
-
-.archive-btn {
-  background: none;
-  border: 1px solid #e74c3c;
-  color: #e74c3c;
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.archive-btn:hover {
-  background-color: #e74c3c;
-  color: white;
+.new-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .back-link {
-  display: inline-block;
-  margin-top: 1.5rem;
+  display: block;
+  text-align: center;
   color: #7f8c8d;
   text-decoration: none;
   font-size: 0.9rem;
 }
-
 .back-link:hover {
-  color: #3d5afe;
+  color: #1a1a1a;
 }
 
 @media (max-width: 600px) {
-  .reparation-list-container {
-    padding: 0 1rem;
-    margin: 1rem auto;
-  }
-
-  .reparation-list-container h1 {
-    font-size: 1.4rem;
-  }
-
-  th, td {
-    padding: 0.6rem 0.7rem;
-    font-size: 0.9rem;
+  .reparations-body {
+    padding: 1.25rem 1rem 2rem;
   }
 }
