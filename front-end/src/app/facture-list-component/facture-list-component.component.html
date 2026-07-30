@@ -1,44 +1,76 @@
-<div class="facture-list-container">
-  <div class="header-row">
-    <h1>Factures</h1>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (factures.length === 0 && !errorMessage) {
-    <p>Aucune facture pour le moment. Les factures naissent de la transformation d'un devis accepté.</p>
-  }
-
-  @if (factures.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Client</th>
-            <th>Montant TTC</th>
-            <th>Acompte</th>
-            <th>Statut</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (facture of factures; track facture.id) {
-            <tr>
-              <td>{{ facture.date }}</td>
-              <td>{{ facture.client.prenom }} {{ facture.client.nom }}</td>
-              <td>{{ facture.montantTtc }} €</td>
-              <td>{{ facture.montantAcompte }} €</td>
-              <td>{{ facture.statut }}</td>
-              <td><a [routerLink]="['/factures', facture.id]" class="edit-link">Voir le détail</a></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="factures-page">
+  <header class="factures-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="factures-body">
+    <h2>Factures</h2>
+    <p class="subtitle">Accès patron uniquement</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <p class="stat-label">Encaissé</p>
+        <p class="stat-value">{{ montantEncaisse | number:'1.0-2' }} €</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">En attente</p>
+        <p class="stat-value">{{ montantEnAttente | number:'1.0-2' }} €</p>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filtre === 'toutes'" (click)="setFiltre('toutes')">Toutes</button>
+      <button class="filter-tab" [class.active]="filtre === 'payee'" (click)="setFiltre('payee')">Payées</button>
+      <button class="filter-tab" [class.active]="filtre === 'attente'" (click)="setFiltre('attente')">En attente</button>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (facturesFiltrees.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucune facture pour le moment. Les factures naissent de la transformation d'un devis accepté.</p>
+    }
+
+    @if (facturesFiltrees.length > 0) {
+      <ul class="facture-list">
+        @for (facture of facturesFiltrees; track facture.id) {
+          <li class="facture-row">
+            <div class="facture-top">
+              <div class="facture-identity">
+                <p class="facture-ref">{{ reference(facture) }}</p>
+                <p class="facture-detail">{{ facture.client.prenom }} {{ facture.client.nom }} · {{ facture.montantTtc }} €</p>
+              </div>
+              <span class="statut-badge" [class]="'statut-' + facture.statut">{{ statutLabel(facture.statut) }}</span>
+            </div>
+            <div class="facture-actions">
+              <a [routerLink]="['/factures', facture.id]" class="edit-link">Voir le détail</a>
+              @if (peutArchiver(facture)) {
+                <button (click)="archiveFacture(facture.id!)" class="archive-btn">Archiver</button>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    }
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>
