@@ -51,6 +51,15 @@ export class FactureDetailComponentComponent implements OnInit {
     });
   }
 
+  // Reste dû = montant total - somme déjà reçue (montantAcompte cumulé côté serveur).
+  resteDu(): string {
+    if (!this.facture) {
+      return '0.00';
+    }
+    const reste = parseFloat(this.facture.montantTtc) - parseFloat(this.facture.montantAcompte || '0');
+    return reste.toFixed(2);
+  }
+
   enregistrerAcompte(): void {
     this.errorMessage = '';
     this.successMessage = '';
@@ -62,7 +71,7 @@ export class FactureDetailComponentComponent implements OnInit {
 
     this.factureService.payerAcompte(this.factureId, this.montantAcompteSaisi).subscribe({
       next: () => {
-        this.successMessage = 'Acompte enregistré avec succès.';
+        this.successMessage = 'Versement enregistré avec succès.';
         this.montantAcompteSaisi = null;
         this.loadFacture();
       },

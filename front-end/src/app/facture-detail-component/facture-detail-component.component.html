@@ -20,7 +20,8 @@
       @if (facture.statut !== 'payee' && facture.statut !== 'annulee') {
         <div class="actions-facture">
           <div class="acompte-form">
-            <label for="acompte">Enregistrer un acompte (€)</label>
+            <p class="acompte-contexte">Déjà reçu : <strong>{{ facture.montantAcompte }} €</strong> — Reste dû : <strong>{{ resteDu() }} €</strong></p>
+            <label for="acompte">Enregistrer un versement (€)</label>
             <div class="acompte-inputs">
               <input type="number" id="acompte" name="acompte" [(ngModel)]="montantAcompteSaisi" min="0.01" step="0.01">
               <button (click)="enregistrerAcompte()">Enregistrer</button>

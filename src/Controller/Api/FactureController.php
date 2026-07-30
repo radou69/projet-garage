@@ -130,7 +130,7 @@ class FactureController extends AbstractController
             return $this->json(['message' => 'montantAcompte doit être un nombre positif.'], 400);
         }
 
-        $montantAcompte = (float) $data['montantAcompte'];
+        $versement = (float) $data['montantAcompte'];
 
         try {
             $dateAcompte = isset($data['dateAcompte']) ? new \DateTime($data['dateAcompte']) : new \DateTime();
@@ -138,9 +138,18 @@ class FactureController extends AbstractController
             return $this->json(['message' => 'Format de date invalide (attendu : YYYY-MM-DD).'], 400);
         }
 
-        $facture->setMontantAcompte(number_format($montantAcompte, 2, '.', ''));
+        // Cumule ce versement avec les acomptes déjà enregistrés — chaque appel représente
+        // un nouveau paiement reçu, pas le nouveau total (sinon les versements précédents
+        // sont écrasés et perdus).
+        $nouveauMontantAcompte = (float) $facture->getMontantAcompte() + $versement;
+
+        if ($nouveauMontantAcompte > (float) $facture->getMontantTtc()) {
+            return $this->json(['message' => 'Le montant total des acomptes dépasse le montant de la facture.'], 400);
+        }
+
+        $facture->setMontantAcompte(number_format($nouveauMontantAcompte, 2, '.', ''));
         $facture->setDateAcompte($dateAcompte);
-        $facture->setStatut($montantAcompte >= (float) $facture->getMontantTtc() ? 'payee' : 'acompte');
+        $facture->setStatut($nouveauMontantAcompte >= (float) $facture->getMontantTtc() ? 'payee' : 'acompte');
 
         $em->flush();
 

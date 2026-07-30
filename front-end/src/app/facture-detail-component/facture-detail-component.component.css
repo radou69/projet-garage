@@ -61,6 +61,12 @@
   border-top: 1px solid #eee;
 }
 
+.acompte-contexte {
+  margin: 0 0 0.6rem 0;
+  color: #2c3e50;
+  font-size: 0.85rem;
+}
+
 .acompte-form label {
   display: block;
   margin-bottom: 0.4rem;
