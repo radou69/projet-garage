@@ -1,49 +1,87 @@
-<div class="vo-list-container">
-  <div class="header-row">
-    <h1>Véhicules en vente</h1>
-    <a routerLink="/vehicules-occasion/nouveau" class="new-btn">+ Ajouter au stock</a>
-  </div>
-
-  @if (errorMessage) {
-    <p class="error-message">{{ errorMessage }}</p>
-  }
-
-  @if (vehicules.length === 0 && !errorMessage) {
-    <p>Aucun véhicule en stock pour le moment.</p>
-  }
-
-  @if (vehicules.length > 0) {
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Marque</th>
-            <th>Modèle</th>
-            <th>Année</th>
-            <th>Kilométrage</th>
-            <th>Prix</th>
-            <th>Statut</th>
-            <th>Acheteur</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (vo of vehicules; track vo.id) {
-            <tr>
-              <td>{{ vo.marque }}</td>
-              <td>{{ vo.modele }}</td>
-              <td>{{ vo.annee }}</td>
-              <td>{{ vo.kilometrage }} km</td>
-              <td>{{ vo.prix }} €</td>
-              <td>{{ vo.statut }}</td>
-              <td>{{ vo.client ? (vo.client.prenom + ' ' + vo.client.nom) : '—' }}</td>
-              <td><a [routerLink]="['/vehicules-occasion/modifier', vo.id]" class="edit-link">Gérer</a></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+<div class="vo-page">
+  <header class="vo-header">
+    <div class="header-content">
+      <h1><a routerLink="/dashboard" class="brand-link">AutoGest</a></h1>
+      <div class="header-actions">
+        <button (click)="logout()" class="icon-btn" aria-label="Se déconnecter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2v10"/>
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"/>
+          </svg>
+        </button>
+        <button class="icon-btn" aria-label="Menu" (click)="openMenu()">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 6h16"/>
+            <path d="M4 12h16"/>
+            <path d="M4 18h16"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  }
+  </header>
 
-  <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  <div class="vo-body">
+    <h2>Vente véhicules</h2>
+    <p class="subtitle">Stock d'occasion</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <p class="stat-label">Disponibles</p>
+        <p class="stat-value">{{ countDisponible }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Réservés</p>
+        <p class="stat-value">{{ countReserve }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Vendus</p>
+        <p class="stat-value">{{ countVendu }}</p>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="filtre === 'disponible'" (click)="setFiltre('disponible')">Disponible</button>
+      <button class="filter-tab" [class.active]="filtre === 'reserve'" (click)="setFiltre('reserve')">Réservé</button>
+      <button class="filter-tab" [class.active]="filtre === 'vendu'" (click)="setFiltre('vendu')">Vendu</button>
+      <button class="filter-tab" [class.active]="filtre === 'toutes'" (click)="setFiltre('toutes')">Tous</button>
+    </div>
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    @if (vehiculesFiltres.length === 0 && !errorMessage) {
+      <p class="empty-message">Aucun véhicule en stock pour le moment.</p>
+    }
+
+    @if (vehiculesFiltres.length > 0) {
+      <ul class="vo-list">
+        @for (vo of vehiculesFiltres; track vo.id) {
+          <li class="vo-row">
+            <a [routerLink]="['/vehicules-occasion/modifier', vo.id]" class="vo-row-link">
+              <div class="vo-thumb">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
+                  <circle cx="6.5" cy="16.5" r="2.5"/>
+                  <circle cx="16.5" cy="16.5" r="2.5"/>
+                </svg>
+              </div>
+              <div class="vo-identity">
+                <p class="vo-name">{{ vo.marque }} {{ vo.modele }} — {{ vo.annee }}</p>
+                <p class="vo-detail">{{ vo.prix }} € · {{ vo.kilometrage }} km</p>
+              </div>
+              <span class="statut-badge" [class]="'statut-' + vo.statut">{{ statutLabel(vo.statut) }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+
+    <a routerLink="/vehicules-occasion/nouveau" class="new-btn">
+      <span>Ajouter un véhicule</span>
+      <span class="new-btn-icon">+</span>
+    </a>
+
+    <a routerLink="/dashboard" class="back-link">← Retour au tableau de bord</a>
+  </div>
 </div>

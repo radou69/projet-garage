@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { VehiculeOccasionService, VehiculeOccasion, VehiculeOccasionCreatePayload } from '../services/vehicule-occasion.service';
 import { ClientService, Client } from '../services/client.service';
 import { AuthService } from '../services/auth.service';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'app-vehicule-occasion-form-component',
@@ -23,11 +24,13 @@ export class VehiculeOccasionFormComponentComponent implements OnInit {
 
   voId: number | null = null;
   isEditMode = false;
+  editingFields = false;
   statutActuel = '';
   clientActuel: string | null = null;
 
   clients: Client[] = [];
   clientAcheteurId: number | undefined = undefined;
+  venteConfirmee = false;
 
   errorMessage = '';
   successMessage = '';
@@ -36,6 +39,7 @@ export class VehiculeOccasionFormComponentComponent implements OnInit {
     private voService: VehiculeOccasionService,
     private clientService: ClientService,
     public authService: AuthService,
+    private menuState: MenuStateService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -62,6 +66,8 @@ export class VehiculeOccasionFormComponentComponent implements OnInit {
           };
           this.statutActuel = data.statut ?? 'disponible';
           this.clientActuel = data.client ? `${data.client.prenom} ${data.client.nom}` : null;
+          this.editingFields = false;
+          this.venteConfirmee = false;
         },
         error: () => {
           this.errorMessage = 'Impossible de charger ce véhicule.';
@@ -81,6 +87,7 @@ export class VehiculeOccasionFormComponentComponent implements OnInit {
     request.subscribe({
       next: () => {
         this.successMessage = this.isEditMode ? 'Véhicule modifié avec succès.' : 'Véhicule ajouté au stock avec succès.';
+        this.editingFields = false;
         setTimeout(() => this.router.navigate(['/vehicules-occasion']), 1000);
       },
       error: () => {
@@ -95,18 +102,37 @@ export class VehiculeOccasionFormComponentComponent implements OnInit {
       this.errorMessage = 'Merci de sélectionner un client acheteur.';
       return;
     }
-    const confirmed = confirm('Confirmer la vente de ce véhicule ? Cette action est définitive.');
-    if (!confirmed) {
+    if (!this.venteConfirmee) {
+      this.errorMessage = 'Merci de confirmer définitivement la vente.';
       return;
     }
     this.voService.vendre(this.voId, this.clientAcheteurId).subscribe({
       next: () => {
         this.successMessage = 'Véhicule marqué comme vendu.';
         this.statutActuel = 'vendu';
+        this.venteConfirmee = false;
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Impossible de finaliser la vente.';
       }
     });
+  }
+
+  statutLabel(): string {
+    switch (this.statutActuel) {
+      case 'disponible': return 'Disponible';
+      case 'reserve': return 'Réservé';
+      case 'vendu': return 'Vendu';
+      default: return this.statutActuel;
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  openMenu(): void {
+    this.menuState.open();
   }
 }

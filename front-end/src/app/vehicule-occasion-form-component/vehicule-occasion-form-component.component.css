@@ -1,16 +1,58 @@
+.vo-form-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.form-header {
+  background-color: #000000;
+}
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+}
+.header-content h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+.brand-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+.icon-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+.icon-btn:hover {
+  opacity: 0.8;
+}
+
+/* Mode création : formulaire classique */
 .form-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   padding: 2rem 1.5rem;
-  gap: 1.5rem;
 }
 
 .vo-form {
   background: white;
   padding: 2.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 450px;
 }
@@ -18,6 +60,23 @@
 .vo-form h1 {
   margin: 0 0 1.5rem 0;
   color: #2c3e50;
+  font-weight: 800;
+}
+
+.breadcrumb {
+  margin: 0 0 0.5rem 0;
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.form-row .form-group {
+  flex: 1;
+  min-width: 0;
 }
 
 .form-group {
@@ -27,46 +86,250 @@
 .form-group label {
   display: block;
   margin-bottom: 0.4rem;
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #2c3e50;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.7rem 0.8rem;
   border: 1px solid #dcdfe6;
-  border-radius: 4px;
+  border-radius: 8px;
   box-sizing: border-box;
   font-size: 1rem;
+  font-family: inherit;
   background-color: white;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+button[type="submit"]:hover {
+  background-color: #333333;
+}
+
+/* Mode édition/vente : présentation fiche */
+.detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  box-sizing: border-box;
+}
+
+.section-kicker {
+  margin: 0 0 0.5rem 0;
+  color: #1a1a1a;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.detail-card {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.titre-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.titre-row h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 1.5rem 0 0.75rem;
+}
+
+/* Champs éditables présentés en lignes de fiche (même logique, autre habillage) */
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eeeeee;
+}
+.field-row label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7f8c8d;
+}
+.field-row input {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-family: inherit;
+}
+.field-row input:focus {
+  outline: none;
+  color: #000000;
+}
+
+.field-row-pair {
+  display: flex;
+  gap: 1.5rem;
+}
+.field-row-pair .field-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eeeeee;
+}
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #7f8c8d;
+}
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.statut-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-top: 0.2rem;
+}
+.statut-disponible { background-color: #d7f2e0; color: #1e7d43; }
+.statut-reserve { background-color: #ece4fa; color: #6a3fb5; }
+.statut-vendu { background-color: #eceff1; color: #555555; }
+
+.modifier-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #eceff1;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.25rem;
+  font-family: inherit;
+}
+.modifier-btn:hover {
+  background-color: #dde1e4;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1.25rem;
+}
+.save-btn:hover {
+  background-color: #333333;
+}
+
+.vente-card {
+  background-color: #f4f5f7;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+.vente-card .section-title {
+  margin-top: 0;
+}
+
+.confirm-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0.9rem 0 0.25rem;
+  cursor: pointer;
+}
+.confirm-checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.vendre-btn {
+  width: 100%;
+  padding: 0.7rem;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.vendre-btn:hover {
+  background-color: #1e8449;
+}
+.vendre-btn:disabled {
+  background-color: #b7ddc4;
+  cursor: not-allowed;
+}
+
+.restriction-notice {
+  background-color: #fff8e1;
+  border: 1px solid #ffe082;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: #8a6d00;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .error-message {
   color: #e74c3c;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
-
 .success-message {
   color: #27ae60;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-button[type="submit"] {
-  width: 100%;
-  padding: 0.7rem;
-  background-color: #3d5afe;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-button[type="submit"]:hover {
-  background-color: #303f9f;
+  margin-top: 1rem;
 }
 
 .back-link {
@@ -77,73 +340,26 @@ button[type="submit"]:hover {
   text-decoration: none;
   font-size: 0.9rem;
 }
-
 .back-link:hover {
-  color: #3d5afe;
-}
-
-.statut-info {
-  background: white;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 450px;
-}
-
-.statut-info p {
-  margin: 0.3rem 0;
-  color: #2c3e50;
-}
-
-.vente-form {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  width: 100%;
-  max-width: 450px;
-}
-
-.vente-form h2 {
-  margin: 0 0 1rem 0;
-  color: #2c3e50;
-  font-size: 1.1rem;
-}
-
-.vendre-btn {
-  width: 100%;
-  padding: 0.6rem;
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.vendre-btn:hover {
-  background-color: #1e8449;
-}
-
-.restriction-notice {
-  background-color: #fff8e1;
-  border: 1px solid #ffe082;
-  padding: 0.75rem 1rem;
-  border-radius: 4px;
-  color: #8a6d00;
-  font-size: 0.9rem;
-  max-width: 450px;
-  width: 100%;
-  box-sizing: border-box;
+  color: #1a1a1a;
 }
 
 @media (max-width: 600px) {
-  .vo-form, .statut-info, .vente-form {
+  .vo-form {
     padding: 1.5rem;
   }
 
   .vo-form h1 {
     font-size: 1.4rem;
+  }
+
+  .detail-container {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .form-row,
+  .field-row-pair {
+    flex-direction: column;
+    gap: 0;
   }
 }
